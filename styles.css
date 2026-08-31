@@ -241,6 +241,12 @@ summary:focus-visible { outline: 3px solid #778c00; outline-offset: 4px; }
 .evidence-shelf p { margin: 0; color: var(--muted); font-size: 12px; }
 .evidence-tag { flex: 0 0 auto; padding: 4px 9px; border-radius: 999px; background: var(--surface); color: var(--indigo); font-size: 9px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 
+.reference-disclosure { margin-top: 46px; padding: 30px 32px; border: 1px solid var(--line); border-top-color: var(--ink); border-radius: var(--radius); background: rgba(255, 254, 250, .68); }
+.reference-disclosure h3 { margin: 0; font-family: var(--font-display); font-size: clamp(25px, 3vw, 34px); font-weight: 550; line-height: 1.2; letter-spacing: -.025em; }
+.reference-disclosure > p:not(.kicker) { max-width: 880px; margin: 13px 0 0; color: var(--muted); font-size: 14px; }
+.reference-links { display: flex; flex-wrap: wrap; gap: 9px 22px; margin-top: 20px; }
+.reference-links a { color: var(--ink-soft); font-size: 12px; font-weight: 800; text-underline-offset: 3px; }
+
 .chapter-library { padding: 78px 0 100px; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 30px; }
 .kicker { margin: 0 0 8px; color: var(--indigo); font-size: 12px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
@@ -347,6 +353,12 @@ summary:focus-visible { outline: 3px solid #778c00; outline-offset: 4px; }
 
 /* Chapter visual */
 .loop-visual { margin: 34px 0 0; padding: 28px; border: 1px solid var(--line); border-top-color: var(--ink); border-radius: var(--radius); background: rgba(255, 254, 250, .64); }
+.lesson-figure { margin: 32px 0 0; overflow: hidden; border: 1px solid var(--line); border-top-color: var(--ink); border-radius: var(--radius); background: #fff; }
+.lesson-figure img { width: 100%; height: auto; display: block; object-fit: contain; }
+.lesson-figure figcaption { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 15px 18px; border-top: 1px solid var(--line); background: var(--surface-soft); color: var(--muted); font-size: 11px; line-height: 1.55; }
+.lesson-figure figcaption > span { max-width: 620px; }
+.lesson-figure figcaption strong { color: var(--ink-soft); }
+.lesson-figure figcaption a { flex: 0 0 auto; color: var(--ink); font-weight: 800; text-underline-offset: 3px; }
 .loop-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
 .loop-steps-six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .loop-steps li { min-width: 0; position: relative; padding: 0 16px 12px; border-left: 1px solid var(--line); }
@@ -501,6 +513,8 @@ details p { margin: 12px 0 2px; color: var(--ink-soft); }
   .featured-chapter .chapter-arrow { display: grid; }
   .notebook-links,
   .chapter-source-links { grid-template-columns: 1fr; }
+  .lesson-figure figcaption { align-items: flex-start; flex-direction: column; gap: 8px; padding: 14px 15px; }
+  .lesson-figure figcaption a { flex: auto; }
   .chapter-link { grid-template-columns: 38px 1fr; gap: 12px; min-height: 0; padding: 24px 4px; }
   .chapter-arrow { display: none; }
   .chapter-summary h3 { font-size: 28px; }
@@ -508,6 +522,7 @@ details p { margin: 12px 0 2px; color: var(--ink-soft); }
   .section-heading { align-items: start; }
   .chapter-count { padding-top: 30px; }
   .collection-note { align-items: flex-start; padding: 22px; }
+  .reference-disclosure { padding: 26px 22px; }
   .home-footer { min-height: 76px; }
   .chapter-hero { padding: 56px 0 62px; }
   .chapter-hero h1 { font-size: clamp(46px, 13vw, 64px); }
