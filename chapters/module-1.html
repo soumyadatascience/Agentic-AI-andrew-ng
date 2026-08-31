@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Module 1 notes on agentic AI, autonomy, task decomposition, evaluation, and workflow design patterns.">
+  <title>Design the workflow, not just the prompt · Agentic AI Learning Notes</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css">
+</head>
+<body class="chapter-body">
+  <a class="skip-link" href="#chapter-content">Skip to chapter</a>
+  <header class="site-header chapter-header"><a class="brand" href="../index.html" aria-label="Agentic AI learning notes home"><span class="brand-mark" aria-hidden="true">AI</span><span>Agentic AI · Learning Notes</span></a><a class="back-link" href="../index.html#module-1"><span aria-hidden="true">←</span> Module 1</a></header>
+  <main class="page chapter-page" id="chapter-content">
+    <section class="chapter-hero" aria-labelledby="chapter-title">
+      <div class="chapter-hero-copy"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-1">Module 1</a><span aria-hidden="true">/</span><span aria-current="page">Chapter 1</span></nav><p class="eyebrow">Module 1 · Introduction to Agentic Workflows</p><h1 id="chapter-title">Design the workflow, not just the prompt.</h1><p>Agentic AI organizes model calls, tools, feedback, and decisions into a process that can pursue a goal across multiple steps.</p></div>
+      <aside class="chapter-hero-note" aria-label="Chapter details"><span class="note-number">M1</span><dl><div><dt>Focus</dt><dd>Workflow design</dd></div><div><dt>Evidence</dt><dd>Course outline</dd></div><div><dt>Outcome</dt><dd>Shape an agentic loop</dd></div></dl></aside>
+    </section>
+    <section class="chapter-thesis" aria-labelledby="thesis-title"><p class="kicker" id="thesis-title">The chapter in one sentence</p><p class="bigidea">An agentic system earns useful autonomy by decomposing work, acting through a bounded workflow, and evaluating what happens next.</p></section>
+    <div class="chapter-shell">
+      <nav class="chapter-nav" aria-label="On this page"><p class="kicker">On this page</p><a href="#agentic"><span>01</span>What “agentic” means</a><a href="#autonomy"><span>02</span>Degrees of autonomy</a><a href="#loop"><span>03</span>The workflow loop</a><a href="#decompose"><span>04</span>Task decomposition</a><a href="#patterns"><span>05</span>Patterns + evaluation</a><a href="#recall"><span>06</span>Recall</a></nav>
+      <article class="chapter-article">
+        <section class="section card" id="agentic" data-section-label="01 · Foundation">
+          <h2>Agentic describes a way of organizing work</h2>
+          <p>A single model response maps one input to one output. An agentic workflow can instead plan or select a next step, perform it, observe the result, and use that new information to continue. The value comes from the workflow around the model—not from a label attached to the model itself.</p>
+          <div class="contrast" aria-label="Comparison of one-shot generation and an agentic workflow"><div><p class="contrast-label">One-shot generation</p><h3>Prompt → response</h3><p>Useful when the task is well specified and can be completed in one pass.</p></div><div class="contrast-grounded"><p class="contrast-label">Agentic workflow</p><h3>Goal → steps → feedback</h3><p>Useful when the task benefits from iteration, external information, or coordinated actions.</p></div></div>
+          <p class="general-note"><strong>General context:</strong> applications can range from research and coding to operations and content workflows. The common thread is multi-step progress toward a goal, not a particular user interface.</p>
+        </section>
+        <section class="section card" id="autonomy" data-section-label="02 · Design choice">
+          <h2>Autonomy is a dial, not a switch</h2><p>Systems can differ in how much they decide and act without human input. The right level depends on task risk, reversibility, predictability, and the quality of available checks.</p>
+          <div class="autonomy-scale" role="img" aria-label="Autonomy increases from assistant to guided workflow to bounded agent"><div><span>Low</span><strong>Assistant</strong><small>Suggests; a person chooses and acts.</small></div><div><span>Medium</span><strong>Guided workflow</strong><small>Executes bounded steps with review gates.</small></div><div><span>Higher</span><strong>Bounded agent</strong><small>Selects and sequences actions within explicit limits.</small></div></div>
+          <div class="mental"><strong>Decision rule:</strong> increase autonomy only when the workflow has enough context, permissions, observability, and evaluation to justify it.</div>
+        </section>
+        <section class="section card" id="loop" data-section-label="03 · Mental model">
+          <h2>The agentic loop turns a goal into observable progress</h2>
+          <div class="loop-visual" role="img" aria-label="Agentic workflow loop: understand the goal, choose a step, act, observe, evaluate, then continue or stop"><ol class="loop-steps loop-steps-six"><li><span class="loop-number">01</span><strong>Understand</strong><small>Clarify goal and constraints</small></li><li><span class="loop-number">02</span><strong>Choose</strong><small>Select the next useful step</small></li><li><span class="loop-number">03</span><strong>Act</strong><small>Generate or use a tool</small></li><li class="loop-evidence"><span class="loop-number">04</span><strong>Observe</strong><small>Capture output or feedback</small></li><li><span class="loop-number">05</span><strong>Evaluate</strong><small>Compare with the goal</small></li><li class="loop-validate"><span class="loop-number">06</span><strong>Continue or stop</strong><small>Repeat only when useful</small></li></ol><p class="loop-return"><span aria-hidden="true">↺</span> Observations update the next decision; a stopping condition keeps the loop bounded.</p></div>
+          <p>Benefits such as adaptability, richer task coverage, and reduced manual coordination come from this ability to react to intermediate results. The same loop also creates new responsibilities: decide what the system may do, what evidence it must collect, and when it must stop.</p>
+        </section>
+        <section class="section card" id="decompose" data-section-label="04 · Task structure">
+          <h2>Decompose by dependency, not by arbitrary size</h2><p>Task decomposition turns a broad goal into steps whose inputs, outputs, and order are clear. A good split makes dependencies visible: later work should receive the evidence it needs from earlier work.</p>
+          <ol class="case-steps"><li><span>Goal</span><div><strong>Name the desired outcome.</strong> Include constraints and what “done” means.</div></li><li><span>Parts</span><div><strong>Identify distinct responsibilities.</strong> Separate information gathering, transformation, action, and checking where useful.</div></li><li><span>Order</span><div><strong>Connect the dependencies.</strong> If one step creates an input for another, make the handoff explicit.</div></li><li><span>Check</span><div><strong>Place evaluation where errors become visible.</strong> Check intermediate artifacts when waiting until the end would hide the source of failure.</div></li></ol>
+        </section>
+        <section class="section card" id="patterns" data-section-label="05 · Reusable structures">
+          <h2>Design patterns package recurring workflow decisions</h2><p>The course outline identifies design patterns as a Module 1 theme. In this learning path, reflection and tool use become the next two concrete modules.</p>
+          <p class="general-note"><strong>General context:</strong> patterns give reusable shapes to recurring workflow needs. They are building blocks to apply when the task calls for them, not goals by themselves.</p>
+          <div class="principles"><article><span>01</span><h3>Start from the task</h3><p>Choose a pattern because it addresses a real bottleneck, not because it is fashionable.</p></article><article><span>02</span><h3>Define success early</h3><p>Evaluation makes the desired behavior observable before the workflow grows complex.</p></article><article><span>03</span><h3>Test the whole path</h3><p>A strong component can still fail when its inputs, handoffs, or stopping rule are weak.</p></article><article><span>04</span><h3>Keep control explicit</h3><p>Bound permissions, steps, and retries to match the consequences of the task.</p></article></div>
+          <p class="general-note"><strong>General context:</strong> evaluation may combine deterministic checks, model-based judgments, and human review. The appropriate mix depends on what can be measured reliably and what errors would cost.</p>
+        </section>
+        <section class="section card recall-section" id="recall" data-section-label="06 · Remember it">
+          <h2>Recall before you move on</h2><div class="recall"><div class="r"><span class="num">01</span><strong>Agentic AI is a workflow around model decisions and actions.</strong></div><div class="r"><span class="num">02</span><strong>Autonomy should rise only with appropriate control and evidence.</strong></div><div class="r"><span class="num">03</span><strong>Decomposition should expose dependencies and checkpoints.</strong></div><div class="r"><span class="num">04</span><strong>Patterns are useful when they solve a task-specific need.</strong></div></div>
+          <div class="self-check"><h3>Self-check</h3><details><summary>What makes a workflow agentic rather than one-shot?</summary><p>It can select or plan steps, act, observe intermediate results, and use those observations to decide what happens next.</p></details><details><summary>Why is autonomy better viewed as a dial?</summary><p>Different tasks justify different amounts of independent decision-making. Risk, reversibility, predictability, permissions, and evaluation should determine the setting.</p></details><details><summary>Where should evaluation enter a decomposed workflow?</summary><p>At points where evidence can reveal whether the workflow is still on track—especially after high-risk or dependency-producing steps.</p></details></div>
+        </section>
+        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Course evidence</p><p>This chapter is grounded in the available Module 1 course-outline themes: agentic AI, degrees of autonomy, benefits and applications, task decomposition, evaluation, and design patterns. Explanatory connections are labeled as general context. No Module 1 notebook exercises are claimed.</p></section>
+      </article>
+    </div>
+    <nav class="chapter-pagination" aria-label="Chapter navigation"><a href="../index.html#module-1"><span>Course map</span><strong>Module 1</strong></a><a class="next" href="module-2.html"><span>Next module</span><strong>Reflection →</strong></a></nav>
+  </main>
+</body>
+</html>
