@@ -4,20 +4,29 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Module 1 notes on agentic workflows, autonomy, benefits, task decomposition, evaluations, and design patterns.">
   <title>Build the work, step by step · Agentic AI Learning Notes</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="module-5-deep-dive.css">
 </head>
-<body class="chapter-body">
+<body class="chapter-body deep-dive-body">
   <a class="skip-link" href="#chapter-content">Skip to chapter</a>
   <header class="site-header chapter-header"><a class="brand" href="../index.html" aria-label="Agentic AI learning notes home"><span class="brand-mark" aria-hidden="true">AI</span><span>Agentic AI · Learning Notes</span></a><a class="back-link" href="../index.html#module-1"><span aria-hidden="true">←</span> Module 1</a></header>
-  <main class="page chapter-page" id="chapter-content">
-    <section class="chapter-hero" aria-labelledby="chapter-title">
+  <main class="page chapter-page deep-dive-page" id="chapter-content">
+    <section class="chapter-hero deep-dive-hero" aria-labelledby="chapter-title">
       <div class="chapter-hero-copy"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-1">Module 1</a><span aria-hidden="true">/</span><span aria-current="page">Foundations</span></nav><p class="eyebrow">Module 1 · Introduction to Agentic Workflows</p><h1 id="chapter-title">Build the work, step by step.</h1><p>An agentic workflow asks a language model application to complete a task through several coordinated steps instead of producing everything in one pass.</p></div>
       <aside class="chapter-hero-note" aria-label="Chapter details"><span class="note-number">M1</span><dl><div><dt>Focus</dt><dd>Workflow foundations</dd></div><div><dt>Evidence</dt><dd>Lessons 1.1–1.8</dd></div><div><dt>Outcome</dt><dd>Decompose a task</dd></div></dl></aside>
     </section>
     <section class="chapter-thesis" aria-labelledby="thesis-title"><p class="kicker" id="thesis-title">The chapter in one sentence</p><p class="bigidea">Break a complex task into model and tool steps, observe how the workflow performs, and improve the parts that hold it back.</p></section>
-    <div class="chapter-shell">
-      <nav class="chapter-nav" aria-label="On this page"><p class="kicker">On this page</p><a href="#agentic"><span>01</span>Agentic workflows</a><a href="#autonomy"><span>02</span>Degrees of autonomy</a><a href="#benefits"><span>03</span>Benefits + task fit</a><a href="#decompose"><span>04</span>Task decomposition</a><a href="#evals"><span>05</span>Evaluations</a><a href="#patterns"><span>06</span>Design patterns</a><a href="#recall"><span>07</span>Recall</a></nav>
-      <article class="chapter-article">
+    <div class="chapter-shell deep-dive-shell">
+      <nav class="chapter-nav deep-nav" aria-label="On this page"><p class="kicker">On this page</p>
+        <a href="#agentic"><span>01</span>Workflow boundary</a>
+        <a href="#autonomy"><span>02</span>Degrees of autonomy</a>
+        <a href="#decompose"><span>03</span>Task decomposition</a>
+        <a href="#architecture"><span>04</span>System ownership</a>
+        <a href="#contracts"><span>05</span>Low-level contracts</a>
+        <a href="#trace"><span>06</span>Worked trace</a>
+        <a href="#evals"><span>07</span>Evaluation</a>
+        <a href="#patterns"><span>08</span>Design patterns</a>
+        <a href="#recall"><span>09</span>Build it yourself</a></nav>
+      <article class="chapter-article deep-dive-article">
         <section class="section card" id="agentic" data-section-label="01 · From one pass to a workflow">
           <h2>The difference is the sequence around the model</h2>
           <p>A non-agentic, zero-shot workflow asks for the finished result in one prompt. An agentic workflow gives the application several opportunities to plan, gather information, draft, inspect, and revise.</p>
@@ -39,6 +48,104 @@
           <ol class="case-steps"><li><span>Observe</span><div><strong>Describe the human workflow.</strong> Focus on actions and decisions, not job titles.</div></li><li><span>Split</span><div><strong>Identify independent steps.</strong> For a customer email: extract the order details, query the order database, then write the reply.</div></li><li><span>Assign</span><div><strong>Match each step to a building block.</strong> Models generate or extract; tools search, retrieve, calculate, update, or execute.</div></li><li><span>Refine</span><div><strong>Break down the weak step.</strong> The five-step essay workflow adds draft, reflection, and revision where a three-step version remains disjointed.</div></li></ol>
           <div class="contract-block"><p>Email workflow · interface sketch</p><ul class="contract-list"><li><code>extract_request(email) -&gt; {order_id, issue}</code></li><li><code>lookup_order(order_id) -&gt; order_record</code></li><li><code>draft_reply(request, order_record) -&gt; draft</code></li><li><code>request_review(draft) -&gt; approved_draft</code><small>The human-in-the-loop boundary is explicit, not hidden inside “send.”</small></li><li><code>send_email(approved_draft) -&gt; receipt</code></li></ul></div>
         </section>
+
+        <section class="section card" id="architecture" data-section-label="04 · Draw the system before naming the agent">
+          <h2>The workflow is a set of owned boundaries</h2>
+          <p class="lead">The word <em>agent</em> compresses several responsibilities. A design document should expand them again: who receives the request, who chooses the next operation, which code can touch a database, where human review enters, and which artifacts survive the run.</p>
+          <p>Module 1 defines an agentic workflow as an LLM-based application that executes multiple steps to complete a task. The application is the important noun. The model supplies language generation, extraction, and some decisions, but the surrounding program supplies order, tool access, state, and stopping conditions. A workflow can be agentic even when every step is predetermined, because the model still performs nontrivial work inside those steps. More autonomous systems move additional decisions, such as tool choice and sequence, into model calls.</p>
+          <p>This view prevents a common conceptual mistake: treating a fluent response as proof that the operation happened. In the invoice example, an extracted due date is only an intermediate value until application code validates its format and sends it to the database update tool. In the customer-email example, a draft is not the same artifact as a sent email; the course deliberately places human review between them.</p>
+
+          <figure class="diagram" aria-labelledby="m1-context-title m1-context-caption">
+            <div class="diagram-heading"><p class="diagram-title" id="m1-context-title">A generic agentic workflow</p><p class="diagram-level">C4-style · system context</p></div>
+            <div class="system-boundary">
+              <span class="boundary-label">LLM-based application boundary</span>
+              <div class="diagram-row">
+                <div class="c4-box external"><p class="owner">External person</p><strong>User request</strong><small>Goal, source material, constraints</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box"><p class="owner">Application</p><strong>Workflow controller</strong><small>Orders known steps and carries artifacts</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box planner"><p class="owner">Model</p><strong>LLM step</strong><small>Extracts, drafts, decides, or evaluates</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box guard"><p class="owner">Application capability</p><strong>Tool or human review</strong><small>Retrieves, calculates, updates, or approves</small></div>
+              </div>
+              <div class="diagram-turn" aria-hidden="true">↓</div>
+              <div class="diagram-row">
+                <div class="c4-box state"><p class="owner">Operational state</p><strong>Database, files, services</strong><small>Read or changed only through explicit operations</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box output"><p class="owner">Durable artifacts</p><strong>Result + trace</strong><small>Final output and intermediate evidence</small></div>
+              </div>
+            </div>
+            <figcaption id="m1-context-caption">The model participates inside a larger application. Tool calls and review gates mark crossings from generated language into external effects.</figcaption>
+          </figure>
+
+          <h3>Component ownership</h3>
+          <div class="contract-list">
+            <section class="contract"><div><h3>Input adapter</h3><p>Normalizes the user request and attaches the source artifacts required for the task.</p></div><dl><div><dt>Owned by</dt><dd>Application code</dd></div><div><dt>Reads</dt><dd>User input, files, or messages</dd></div><div><dt>Returns</dt><dd>A step-ready request object</dd></div></dl></section>
+            <section class="contract"><div><h3>Workflow controller</h3><p>Selects the next predetermined step, passes forward the prior artifact, and stops when the route is complete.</p></div><dl><div><dt>Owned by</dt><dd>Application code in a fixed workflow</dd></div><div><dt>Mutates</dt><dd>Workflow state, not business state directly</dd></div><div><dt>Returns</dt><dd>Trace plus final result</dd></div></dl></section>
+            <section class="contract"><div><h3>Model step</h3><p>Performs one bounded language task: extraction, query drafting, response drafting, critique, or revision.</p></div><dl><div><dt>Owned by</dt><dd>Prompt plus selected model</dd></div><div><dt>Reads</dt><dd>Only the context supplied to that call</dd></div><div><dt>Returns</dt><dd>A proposed artifact</dd></div></dl></section>
+            <section class="contract"><div><h3>Effect adapter</h3><p>Calls search, retrieval, code execution, database update, or human review with explicit arguments.</p></div><dl><div><dt>Owned by</dt><dd>Application/tool code</dd></div><div><dt>Mutates</dt><dd>Only the service named by the capability</dd></div><div><dt>Returns</dt><dd>Tool result or approval decision</dd></div></dl></section>
+          </div>
+        </section>
+
+        <section class="section card" id="contracts" data-section-label="05 · Rebuild the abstraction without a framework">
+          <h2>Framework-free orchestration is ordinary control flow</h2>
+          <p>The course begins with workflow diagrams because the low-level implementation is small enough to reason about directly. The following teaching decomposition is not a verbatim course API. It translates the essay, invoice, and customer-email examples into plain Python-like contracts.</p>
+          <pre class="code-contract"><code><span class="keyword">def</span> run_workflow(request, steps, state):
+    trace = []
+    artifact = request
+    <span class="keyword">for</span> step in steps:
+        before = snapshot(state)
+        artifact = run_step(step, artifact, state)
+        trace.append({
+            <span class="value">"step"</span>: step.name,
+            <span class="value">"input"</span>: artifact.input,
+            <span class="value">"output"</span>: artifact,
+            <span class="value">"before"</span>: before,
+            <span class="value">"after"</span>: snapshot(state),
+        })
+    <span class="keyword">return</span> {<span class="value">"answer"</span>: artifact, <span class="value">"trace"</span>: trace}
+
+<span class="keyword">def</span> run_step(step, artifact, state):
+    <span class="keyword">if</span> step.kind == <span class="value">"llm"</span>:
+        <span class="keyword">return</span> call_model(step.prompt, artifact)
+    <span class="keyword">if</span> step.kind == <span class="value">"tool"</span>:
+        args = step.build_args(artifact)
+        <span class="keyword">return</span> step.function(**args)
+    <span class="keyword">if</span> step.kind == <span class="value">"human_review"</span>:
+        <span class="keyword">return</span> request_review(artifact)</code></pre>
+          <p><code>run_workflow</code> owns sequence and trace construction. <code>run_step</code> owns dispatch. The LLM never gains ambient access to every tool merely because the application has imported it. Each step receives the context and capability chosen for that point in the route.</p>
+
+          <div class="boundary-note"><p><strong>Teaching boundary:</strong> in a fixed workflow, autonomy lives inside a step. In a planning workflow, autonomy also influences which steps are created or selected. The trace format can remain the same in both cases.</p></div>
+
+          <h3>Failure modes appear at boundaries</h3>
+          <div class="mapping-list">
+            <div class="mapping-row"><strong>One-pass under-specification</strong><p>The result covers obvious facts but omits research, checking, or revision.</p><p class="framework-label">Add explicit steps and artifacts.</p></div>
+            <div class="mapping-row"><strong>Tool/result confusion</strong><p>The model describes a database update but no update capability is called.</p><p class="framework-label">Separate proposal from effect.</p></div>
+            <div class="mapping-row"><strong>Oversized step</strong><p>No available model or tool can complete one stage reliably.</p><p class="framework-label">Decompose again or add review.</p></div>
+            <div class="mapping-row"><strong>Invisible handoff</strong><p>A later model call lacks the exact output produced earlier.</p><p class="framework-label">Name and persist the artifact.</p></div>
+            <div class="mapping-row"><strong>Premature automation</strong><p>A consequential output bypasses the human-review point shown in the design.</p><p class="framework-label">Represent approval as a real step.</p></div>
+          </div>
+        </section>
+
+        <section class="section card" id="trace" data-section-label="06 · Follow one request end to end">
+          <h2>The trace is the executable explanation</h2>
+          <p class="lead">For the course customer-email example, the final reply is only the last artifact. The trace shows how the system derived it and where an engineer can intervene.</p>
+          <div class="trace-request"><p class="kicker">Incoming message</p><blockquote>“I ordered a blue KitchenPro blender (Order #8847) but received a red toaster instead. I need the blender for my daughter's birthday party this weekend.”</blockquote></div>
+          <div class="table-wrap">
+            <table class="trace-table">
+              <caption>Worked execution trace for a fixed, human-reviewed email workflow</caption>
+              <thead><tr><th>Span</th><th>Owner</th><th>Reads</th><th>Produces</th><th>Effect</th></tr></thead>
+              <tbody>
+                <tr><td>01</td><td>LLM extraction step</td><td>Customer email</td><td>Customer name, order ID 8847, expected blue blender, received red toaster, timing constraint</td><td class="no-mutation">No mutation</td></tr>
+                <tr><td>02</td><td>Orders query tool</td><td>Order ID and product details</td><td>Verified order record or a not-found result</td><td class="no-mutation">Read-only lookup</td></tr>
+                <tr><td>03</td><td>LLM response step</td><td>Original message plus verified record</td><td>Draft that addresses the shipment error and the time-sensitive context</td><td class="no-mutation">No mutation</td></tr>
+                <tr><td>04</td><td>Human review tool</td><td>Draft plus evidence</td><td>Approval, edits, or rejection</td><td>Review decision</td></tr>
+                <tr><td>05</td><td>Application</td><td>Approved draft and full trace</td><td>Final customer response plus stored evidence</td><td>Only the approved route may proceed</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The trace localizes faults. Missing order details point to extraction. A wrong record points to the query arguments or the order service. A defensive tone points to the drafting prompt. A good draft that should not be sent points to the review decision. Without spans, all of these failures collapse into “the agent gave a bad answer.”</p>
+        </section>
         <section class="section card" id="evals" data-section-label="05 · Learn from outputs">
           <h2>Build first, inspect outputs, then add focused evals</h2><p>The lessons discourage guessing every failure before a prototype exists. Run an end-to-end version, inspect its outputs and intermediate work, identify a meaningful weakness, and create a small evaluation that tracks it.</p>
           <div class="principles"><article><span>01</span><h3>Objective check</h3><p>Code can count a prohibited competitor mention or compare an extracted date with a known answer.</p></article><article><span>02</span><h3>Model judge</h3><p>When quality is subjective, a separate model can score the output against explicit criteria.</p></article><article><span>03</span><h3>End-to-end eval</h3><p>Measure the quality of the final workflow result.</p></article><article><span>04</span><h3>Component eval</h3><p>Measure one step, such as information extraction or search quality.</p></article></div>
@@ -53,9 +160,20 @@
         </section>
         <section class="section card recall-section" id="recall" data-section-label="07 · Remember it">
           <h2>Recall before you move on</h2><div class="recall"><div class="r"><span class="num">01</span><strong>An agentic workflow completes a task through multiple coordinated steps.</strong></div><div class="r"><span class="num">02</span><strong>Autonomy depends on which decisions are fixed and which are dynamic.</strong></div><div class="r"><span class="num">03</span><strong>Decompose weak steps until a model or tool can execute them.</strong></div><div class="r"><span class="num">04</span><strong>Evals turn observed weaknesses into trackable measures.</strong></div></div>
+          <h3>Try it in code</h3>
+          <ol class="try-sequence">
+            <li>Choose one real task and write the one-pass version before adding workflow steps.</li>
+            <li>Describe how a person would complete it, naming each decision and external action.</li>
+            <li>Assign every step to an LLM, another model, a tool, or human review.</li>
+            <li>Define the artifact that crosses each handoff.</li>
+            <li>Implement the route as a plain list of step functions.</li>
+            <li>Capture every step input, output, error, and state change in one trace.</li>
+            <li>Inspect 10-20 runs and select one recurring failure for an evaluation.</li>
+            <li>Split the weakest step or add the missing capability, then rerun the same cases.</li>
+          </ol>
           <div class="self-check"><h3>Self-check</h3><details><summary>How does the course define an agentic AI workflow?</summary><p>It is an LLM-based application that carries out multiple steps to complete a task.</p></details><details><summary>What are the two basic workflow building blocks?</summary><p>Models and tools. Models generate, interpret, or decide; tools connect the workflow to functions, APIs, retrieval, and code execution.</p></details><details><summary>What should you do when one workflow step performs poorly?</summary><p>Study how a person would complete it, then divide it into smaller steps that available models or tools can handle.</p></details></div>
         </section>
-        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Course evidence + image attribution</p><p>Original English summary based on Module 1 lessons in the <a href="https://github.com/datawhalechina/agentic-ai/tree/main/1.%20Agentic%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%AE%80%E4%BB%8B%5BIntroduction%20to%20Agentic%20Workflows%5D">Datawhale China Agentic AI reference</a>. The selected lesson image is reproduced from pinned commit <code>a93ab1d</code> with its source linked in the caption. The repository contains an <a href="https://github.com/datawhalechina/agentic-ai/blob/main/LICENSE">Apache-2.0 LICENSE</a> while its <a href="https://github.com/datawhalechina/agentic-ai#license">README names CC BY-NC-SA 4.0</a>; attribution is preserved and this site does not claim ownership of the image. Remaining diagrams are original HTML/CSS.</p></section>
+        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Local course authority</p><p>This chapter is grounded in the complete local Module 1 learner PDF and the existing course notes. The Python-like contracts are teaching decompositions of the workflow diagrams, not verbatim framework APIs. No notebook links or outside course claims are included.</p></section>
       </article>
     </div>
     <nav class="chapter-pagination" aria-label="Chapter navigation"><a href="../index.html#module-1"><span>Course map</span><strong>Module 1</strong></a><a class="next" href="module-2.html"><span>Next module</span><strong>Reflection →</strong></a></nav>

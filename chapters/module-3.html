@@ -4,49 +4,171 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Module 3 notes on tool selection, schemas, multi-tool workflows, code execution, and MCP.">
   <title>Tools let the workflow act · Agentic AI Learning Notes</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="module-5-deep-dive.css">
 </head>
-<body class="chapter-body">
+<body class="chapter-body deep-dive-body">
   <a class="skip-link" href="#chapter-content">Skip to chapter</a>
   <header class="site-header chapter-header"><a class="brand" href="../index.html" aria-label="Agentic AI learning notes home"><span class="brand-mark" aria-hidden="true">AI</span><span>Agentic AI · Learning Notes</span></a><a class="back-link" href="../index.html#module-3"><span aria-hidden="true">←</span> Module 3</a></header>
-  <main class="page chapter-page" id="chapter-content">
-    <section class="chapter-hero" aria-labelledby="chapter-title"><div class="chapter-hero-copy"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-3">Module 3</a><span aria-hidden="true">/</span><span aria-current="page">Tool use</span></nav><p class="eyebrow">Module 3 · Tool Use</p><h1 id="chapter-title">Tools let the workflow act.</h1><p>A language model requests a tool call; application code executes the function and returns its result so the model can continue the task.</p></div><aside class="chapter-hero-note" aria-label="Chapter details"><span class="note-number">M3</span><dl><div><dt>Focus</dt><dd>Model ↔ function</dd></div><div><dt>Evidence</dt><dd>Lessons + two labs</dd></div><div><dt>Outcome</dt><dd>Trace a tool call</dd></div></dl></aside></section>
+  <main class="page chapter-page deep-dive-page" id="chapter-content">
+    <section class="chapter-hero deep-dive-hero" aria-labelledby="chapter-title"><div class="chapter-hero-copy"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-3">Module 3</a><span aria-hidden="true">/</span><span aria-current="page">Tool use</span></nav><p class="eyebrow">Module 3 · Tool Use</p><h1 id="chapter-title">Tools let the workflow act.</h1><p>A language model requests a tool call; application code executes the function and returns its result so the model can continue the task.</p></div><aside class="chapter-hero-note" aria-label="Chapter details"><span class="note-number">M3</span><dl><div><dt>Focus</dt><dd>Model ↔ function</dd></div><div><dt>Evidence</dt><dd>Lessons + two labs</dd></div><div><dt>Outcome</dt><dd>Trace a tool call</dd></div></dl></aside></section>
     <section class="chapter-thesis" aria-labelledby="thesis-title"><p class="kicker" id="thesis-title">The chapter in one sentence</p><p class="bigidea">A useful tool layer describes available functions clearly, executes model requests outside the model, and carries each result into the next decision.</p></section>
-    <div class="chapter-shell">
-      <nav class="chapter-nav" aria-label="On this page"><p class="kicker">On this page</p><a href="#mechanics"><span>01</span>Tool mechanics</a><a href="#loop"><span>02</span>The tool loop</a><a href="#schema"><span>03</span>Schemas + AISuite</a><a href="#workflows"><span>04</span>Multi-tool labs</a><a href="#code"><span>05</span>Code execution</a><a href="#mcp"><span>06</span>MCP</a><a href="#recall"><span>07</span>Recall</a></nav>
-      <article class="chapter-article">
+    <div class="chapter-shell deep-dive-shell">
+      <nav class="chapter-nav deep-nav" aria-label="On this page"><p class="kicker">On this page</p>
+        <a href="#mechanics"><span>01</span>Capability boundary</a>
+        <a href="#architecture"><span>02</span>System context</a>
+        <a href="#loop"><span>03</span>The tool loop</a>
+        <a href="#schema"><span>04</span>Schema contract</a>
+        <a href="#contracts"><span>05</span>Low-level runner</a>
+        <a href="#workflows"><span>06</span>Multi-tool labs</a>
+        <a href="#trace"><span>07</span>Email trace</a>
+        <a href="#code"><span>08</span>Code execution</a>
+        <a href="#mcp"><span>09</span>MCP boundary</a>
+        <a href="#recall"><span>10</span>Build it yourself</a></nav>
+      <article class="chapter-article deep-dive-article">
         <section class="section card" id="mechanics" data-section-label="01 · The model requests; code executes">
           <h2>A tool is a function exposed to the model</h2><p>The model receives descriptions of available tools and decides whether one is relevant. It produces a structured request containing a tool name and arguments. The application—not the language model—runs the function.</p>
           <figure class="lesson-figure lesson-figure-wide"><img src="../assets/reference/datawhale-agentic-ai-a93ab1d/m3-simple-tool-execution.png" alt="Course diagram showing a model calling get_current_time for a live time question, receiving the function result, and answering, while responding directly to a stable caffeine question." loading="lazy" decoding="async"><figcaption><span><strong>Reference visual · Lesson 3.1</strong> The model chooses a tool only when the request needs one.</span><a href="https://github.com/datawhalechina/agentic-ai/blob/a93ab1d8546cca8b508a72f0f2c385777d5f1403/images/3.1.1.png">3.1.1.png at pinned commit <span aria-hidden="true">↗</span></a></figcaption></figure>
           <p>Tools extend a workflow with current data, database access, calculations, search, email, calendars, and other operations represented by code.</p>
         </section>
+
+        <section class="section card" id="architecture" data-section-label="02 · Separate deciding from doing">
+          <h2>A tool call is a request across a capability boundary</h2>
+          <p class="lead">The model does not run <code>get_current_time</code>, search the inbox, or send a message. It emits a structured request; application code resolves the name, validates arguments, invokes the function, and returns the result as a new message.</p>
+          <p>This distinction is the core security and debugging boundary of tool use. The model can only choose among the capabilities described to it. The application owns the registry of executable functions. The tool owns its interaction with a service. The message history owns the evidence that connects one model turn to the next.</p>
+          <p>In the simple time example, the first model turn receives a question and a tool description. It returns a call for <code>get_current_time</code>. The application executes the Python function, appends a tool-role message containing the time, and calls the model again. Only the second model turn has the observed value needed to write “It is 8am.” For a stable question that does not need the tool, the model can answer directly.</p>
+
+          <figure class="diagram" aria-labelledby="m3-context-title m3-context-caption">
+            <div class="diagram-heading"><p class="diagram-title" id="m3-context-title">Tool-using application</p><p class="diagram-level">C4-style · system context</p></div>
+            <div class="system-boundary">
+              <span class="boundary-label">Agent application boundary</span>
+              <div class="diagram-row">
+                <div class="c4-box external"><p class="owner">External person</p><strong>User request</strong><small>Natural-language goal</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box planner"><p class="owner">Model</p><strong>Tool selector</strong><small>Returns final text or name + arguments</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box guard"><p class="owner">Application</p><strong>Tool dispatcher</strong><small>Resolves, validates, calls, and records</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box"><p class="owner">Python capability</p><strong>Registered function</strong><small>One responsibility and explicit parameters</small></div>
+              </div>
+              <div class="diagram-turn" aria-hidden="true">↓</div>
+              <div class="diagram-row">
+                <div class="c4-box state"><p class="owner">External state</p><strong>Clock, API, inbox, file</strong><small>Read or changed by the tool</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box output"><p class="owner">Conversation state</p><strong>Tool result message</strong><small>Correlated to the original call ID</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box planner"><p class="owner">Model</p><strong>Continue or finish</strong><small>Uses observed result as context</small></div>
+              </div>
+            </div>
+            <figcaption id="m3-context-caption">The dispatcher, not the model, crosses into executable code. The returned value re-enters the model only through explicit conversation history.</figcaption>
+          </figure>
+        </section>
         <section class="section card" id="loop" data-section-label="02 · Mental model">
           <h2>The tool-use loop alternates model decisions and execution</h2>
           <div class="loop-visual" role="img" aria-label="Tool-use loop: request, choose tool, execute, return result, answer or continue"><ol class="loop-steps"><li><span class="loop-number">01</span><strong>Request</strong><small>User states the task</small></li><li><span class="loop-number">02</span><strong>Select + bind</strong><small>Model names a tool and arguments</small></li><li class="loop-evidence"><span class="loop-number">03</span><strong>Execute</strong><small>Application runs the function</small></li><li><span class="loop-number">04</span><strong>Return result</strong><small>Output joins the history</small></li><li class="loop-validate"><span class="loop-number">05</span><strong>Answer / continue</strong><small>Model responds or requests another tool</small></li></ol><p class="loop-return"><span aria-hidden="true">↺</span> A returned value can supply the context or argument needed by the next tool call.</p></div>
-          <div class="contract-block"><p>Manual orchestration</p><ul class="contract-list"><li><code>model(messages, tools) -&gt; tool_request | answer</code></li><li><code>execute(tool_request.name, tool_request.args) -&gt; result</code></li><li><code>messages += tool_result</code></li><li><code>repeat until answer or turn_limit</code><small>The application owns execution, history updates, and the stopping condition.</small></li></ul></div>
         </section>
         <section class="section card" id="schema" data-section-label="03 · Describe the interface">
           <h2>The schema tells the model how to request the function</h2><p>The first lab shows both automatic and manual tool handling with AISuite. A Python function and its docstring can be converted into a schema; the manual version makes the contract visible.</p>
-          <div class="contract-block"><p>Parameterized tool contract</p><ul class="contract-list"><li><code>get_current_time(timezone: IANAString) -&gt; HH:MM:SS</code><small>Name: <code>get_current_time</code> · Description: returns current time for the given timezone · Parameters: required string <code>timezone</code>, such as <code>America/New_York</code> or <code>Pacific/Auckland</code>.</small></li></ul></div>
           <div class="principles"><article><span>01</span><h3>Name</h3><p>Identifies the function that application code can execute.</p></article><article><span>02</span><h3>Description</h3><p>Explains what the tool does so the model can decide when it fits.</p></article><article><span>03</span><h3>Parameters</h3><p>Describe required arguments, types, and useful details such as a timezone format.</p></article><article><span>04</span><h3>Turn limit</h3><p><code>max_turns</code> bounds the automatic tool exchange in the AISuite lab.</p></article></div>
           <ol class="case-steps"><li><span>Auto</span><div><strong>Pass the function in <code>tools</code>.</strong> AISuite creates the description, manages calls, executes locally, and feeds results back.</div></li><li><span>Manual</span><div><strong>Write the schema yourself.</strong> Inspect <code>tool_calls</code>, parse arguments, run the function, append the tool result, then ask the model to continue.</div></li></ol>
+        </section>
+
+        <section class="section card" id="contracts" data-section-label="05 · Expand automatic tool handling">
+          <h2>The runner is a loop over messages and tool requests</h2>
+          <p class="lead">AISuite can derive schemas from Python functions and manage several turns automatically. The manual notebook path reveals the same mechanics in ordinary Python-like control flow.</p>
+          <pre class="code-contract"><code><span class="keyword">def</span> run_tool_agent(user_request, model, registry, max_turns):
+    messages = [{<span class="value">"role"</span>: <span class="value">"user"</span>,
+                 <span class="value">"content"</span>: build_prompt(user_request)}]
+
+    <span class="keyword">for</span> turn in range(max_turns):
+        response = model(messages=messages,
+                         tools=schemas_for(registry))
+
+        <span class="keyword">if</span> response.final_text:
+            <span class="keyword">return</span> {<span class="value">"answer"</span>: response.final_text,
+                    <span class="value">"messages"</span>: messages}
+
+        <span class="keyword">for</span> call in response.tool_calls:
+            tool = registry[call.name]
+            args = parse_json(call.arguments)
+            result = tool(**args)
+            messages.append(response.assistant_message)
+            messages.append({
+                <span class="value">"role"</span>: <span class="value">"tool"</span>,
+                <span class="value">"tool_call_id"</span>: call.id,
+                <span class="value">"content"</span>: compact_json(result),
+            })
+
+    <span class="keyword">return</span> {<span class="value">"error"</span>: <span class="value">"turn_limit_reached"</span>,
+            <span class="value">"messages"</span>: messages}</code></pre>
+
+          <div class="contract-list">
+            <section class="contract"><div><h3>Tool function</h3><p>A normal Python callable such as <code>get_current_time()</code>, <code>search_emails(query)</code>, or <code>send_email(...)</code>.</p></div><dl><div><dt>Reads</dt><dd>Only its named arguments and service</dd></div><div><dt>Mutates</dt><dd>Only when the action is state-changing</dd></div><div><dt>Returns</dt><dd>Compact, consistent data for the next turn</dd></div></dl></section>
+            <section class="contract"><div><h3>Tool schema</h3><p>The model-facing description containing function name, purpose, parameter names, types, and descriptions.</p></div><dl><div><dt>Created by</dt><dd>Library introspection or application code</dd></div><div><dt>Read by</dt><dd>The model</dd></div><div><dt>Returns</dt><dd>A constrained action vocabulary</dd></div></dl></section>
+            <section class="contract"><div><h3>Dispatcher</h3><p>Maps a requested name to an approved callable, parses arguments, and constructs the tool result message.</p></div><dl><div><dt>Called by</dt><dd>The orchestration loop</dd></div><div><dt>Mutates</dt><dd>Conversation history and whatever the chosen tool explicitly owns</dd></div><div><dt>Returns</dt><dd>Correlated tool evidence</dd></div></dl></section>
+            <section class="contract"><div><h3>Agent loop</h3><p>Alternates model turns and dispatch until final text, a defined error, or the turn limit.</p></div><dl><div><dt>Owns</dt><dd>Control flow and stop condition</dd></div><div><dt>Reads</dt><dd>Messages, schemas, registry</dd></div><div><dt>Returns</dt><dd>Answer plus trace</dd></div></dl></section>
+          </div>
+
+          <h3>Failure modes are contract failures</h3>
+          <div class="mapping-list">
+            <div class="mapping-row"><strong>Capability missing</strong><p><code>delete_email</code> is not in the registered list, so deletion cannot occur.</p><p class="framework-label">Change the registry, not the prose.</p></div>
+            <div class="mapping-row"><strong>Ambiguous description</strong><p>Two tools sound interchangeable or a parameter format is unclear.</p><p class="framework-label">Tighten names, docstrings, and schema details.</p></div>
+            <div class="mapping-row"><strong>Bad arguments</strong><p>The call names a real tool but sends malformed JSON or an invalid identifier.</p><p class="framework-label">Validate before invocation and return the error.</p></div>
+            <div class="mapping-row"><strong>Lost correlation</strong><p>The result is appended without the matching tool-call ID.</p><p class="framework-label">Preserve the request/result pair in history.</p></div>
+            <div class="mapping-row"><strong>Unbounded loop</strong><p>The model repeatedly requests tools and never reaches final text.</p><p class="framework-label">Use a turn limit and explicit terminal result.</p></div>
+            <div class="mapping-row"><strong>Unsafe code path</strong><p>Generated Python executes with broader access than the task requires.</p><p class="framework-label">Use the sandbox boundary taught in the lesson.</p></div>
+          </div>
         </section>
         <section class="section card" id="workflows" data-section-label="04 · Course labs">
           <h2>Multiple tools turn one request into an ordered workflow</h2><p>The functions lab expands from current time to weather lookup, text-file writing, and QR-code generation. The model selects among the available tools and infers arguments from the prompt. When one result is needed by another call, it orders the calls by dependency.</p>
           <div class="system-stack" aria-label="Email assistant layers"><div><span>01</span><strong>User request</strong><small>Search, mark, reply, or delete</small></div><div><span>02</span><strong>Email tools</strong><small>Focused functions with clear docstrings</small></div><div><span>03</span><strong>REST routes</strong><small>FastAPI operations with validated data</small></div><div><span>04</span><strong>Inbox state</strong><small>SQLite-backed simulated messages</small></div></div>
           <p>In the email lab, the workflow searches for unread messages from the boss, marks them as read, and sends a reply. A separate experiment removes <code>delete_email</code> from the registered list: the model can discuss deletion but cannot perform it until that tool is made available.</p>
           <div class="mental"><strong>Course point:</strong> the registered list is the workflow’s actual action set. A missing function is a missing capability.</div>
-          <aside class="try-code"><span class="try-label">Try it in code</span><h3>Inspect the request boundary.</h3><p>Register one no-argument tool and one parameterized tool. Print the model’s request, execute it locally, append the result, and continue. Then remove one capability and observe that the workflow can no longer perform that action.</p></aside>
+        </section>
+
+        <section class="section card" id="trace" data-section-label="07 · Follow a state-changing email request">
+          <h2>The email trace proves which tools actually ran</h2>
+          <div class="trace-request"><p class="kicker">User request</p><blockquote>“Check for unread emails from boss@email.com, mark them as read, and send a polite follow-up.”</blockquote></div>
+          <div class="table-wrap">
+            <table class="trace-table">
+              <caption>Representative tool-call trace from the local email-assistant lab</caption>
+              <thead><tr><th>Turn</th><th>Model request</th><th>Application action</th><th>State effect</th><th>Artifact returned</th></tr></thead>
+              <tbody>
+                <tr><td>01</td><td><code>search_unread_from_sender("boss@email.com")</code></td><td>Dispatcher calls the search wrapper over the simulated email service</td><td class="no-mutation">Read-only</td><td>Matching unread message IDs and contents</td></tr>
+                <tr><td>02</td><td><code>mark_email_as_read(id)</code></td><td>Dispatcher calls the PATCH-backed tool for each selected message</td><td class="mutation">Inbox read flag changes</td><td>Compact confirmation for each ID</td></tr>
+                <tr><td>03</td><td><code>send_email(...)</code></td><td>Dispatcher binds recipient, subject, and body from the request and prior messages</td><td class="mutation">New simulated email record</td><td>Sent-message ID or confirmation</td></tr>
+                <tr><td>04</td><td>Final text</td><td>Runner stops and returns the response plus message history</td><td class="no-mutation">No additional effect</td><td>Concise summary of search, mark, and send actions</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The same natural-language request can fail in distinct ways. No unread email is a normal tool result. A missing <code>mark_email_as_read</code> function is a capability gap. A service exception is an execution failure. A final message that claims a send without a matching tool result is a trace inconsistency. Keeping the call/result history lets the application distinguish them.</p>
+
+          <h3>What tool libraries hide</h3>
+          <div class="mapping-list">
+            <div class="mapping-row"><strong>Python function + docstring</strong><p>Becomes a model-visible name, description, and parameter schema.</p><p class="framework-label">Tool registration</p></div>
+            <div class="mapping-row"><strong>Registry lookup + function call</strong><p>Executes the requested capability in application code.</p><p class="framework-label">Tool dispatcher</p></div>
+            <div class="mapping-row"><strong>Assistant call + tool result messages</strong><p>Carry identifiers, arguments, outputs, and conversation state.</p><p class="framework-label">Agent state / run history</p></div>
+            <div class="mapping-row"><strong>Loop + max turns</strong><p>Controls continuation and termination.</p><p class="framework-label">Agent runner</p></div>
+          </div>
+
+          <h3>Try it in code</h3>
+          <ol class="try-sequence">
+            <li>Write a zero-argument tool with a precise docstring and inspect its derived schema.</li>
+            <li>Add one string parameter and verify its type and description in the schema.</li>
+            <li>Handle a tool call manually: parse arguments, invoke the registry entry, and append the result message.</li>
+            <li>Run a request that needs no tool and confirm the dispatcher is not invoked.</li>
+            <li>Remove one required tool from the registry and observe the capability gap.</li>
+            <li>Restore the tool, rerun the same request, and compare traces.</li>
+            <li>Chain a read-only lookup into a state-changing action, preserving both results.</li>
+            <li>Set a small turn limit and return an explicit error when the loop does not finish.</li>
+          </ol>
         </section>
         <section class="section card" id="code" data-section-label="05 · A flexible but risky tool">
           <h2>Code execution replaces a long menu of narrow functions</h2><p>A calculator with separate add, subtract, multiply, and divide tools still cannot handle a new operation unless another function is added. The code-execution lesson instead asks the model to write Python inside execution tags, extracts the code, runs it, and returns the result.</p>
           <figure class="lesson-figure"><img src="../assets/reference/datawhale-agentic-ai-a93ab1d/m3-tool-examples-calculator.png" alt="Course table mapping three prompts to web search, database query, and interest calculation tools, including a ten-year compound-interest question answered with interest_calc or evaluated code." loading="lazy" decoding="async"><figcaption><span><strong>Reference visual · Lesson 3.1</strong> Different prompts map to different functions; the calculation example makes the tool boundary concrete.</span><a href="https://github.com/datawhalechina/agentic-ai/blob/a93ab1d8546cca8b508a72f0f2c385777d5f1403/images/3.1.2.png">3.1.2.png at pinned commit <span aria-hidden="true">↗</span></a></figcaption></figure>
-          <div class="contract-block"><p>Code-execution boundary</p><ul class="contract-list"><li><code>generate_code(request) -&gt; tagged_python</code></li><li><code>execute_in_sandbox(tagged_python) -&gt; {stdout, error}</code></li><li><code>respond(execution_result) -&gt; answer</code></li></ul></div>
           <ol class="case-steps"><li><span>Write</span><div><strong>Generate code for the task.</strong> The output is wrapped in markers such as <code>&lt;execute_python&gt;</code>.</div></li><li><span>Run</span><div><strong>Extract and execute.</strong> The application captures output or an error.</div></li><li><span>Return</span><div><strong>Feed the result back.</strong> The model formats the answer or revises failed code from the error message.</div></li><li><span>Isolate</span><div><strong>Use a sandbox.</strong> The lesson warns that generated code can delete files or expose data when executed directly.</div></li></ol>
         </section>
         <section class="section card" id="mcp" data-section-label="06 · Shared tool access">
           <h2>MCP standardizes connections to tools and data</h2><p>Without a shared protocol, each application must build its own wrapper for every service. The lesson presents MCP as a client–server pattern: applications act as clients, while servers expose operations or data from services such as repositories, drives, databases, or messaging systems.</p>
-          <div class="flow-diagram" style="--flow-columns: 3" role="img" aria-label="MCP connection: an application client connects to an MCP server, which exposes a service's tools or data"><div><span>Application</span><strong>Client</strong><small>Requests a capability through the shared protocol</small></div><div><span>Protocol boundary</span><strong>MCP server</strong><small>Publishes reusable operations and resources</small></div><div><span>Underlying system</span><strong>Service, tool, or data</strong><small>Repository, drive, database, or messaging system</small></div></div>
           <div class="contrast" aria-label="Custom integrations versus MCP"><div><p class="contrast-label">Separate wrappers</p><h3><em>m</em> apps × <em>n</em> tools</h3><p>Every application repeats integration work for every service.</p></div><div class="contrast-grounded"><p class="contrast-label">Shared protocol</p><h3><em>m</em> clients + <em>n</em> servers</h3><p>Applications connect to reusable servers through the same interface.</p></div></div>
           <p>The course demonstration uses a GitHub MCP server to fetch a README and list pull requests; the returned data becomes context for a concise model response.</p>
         </section>
@@ -54,7 +176,7 @@
           <h2>Recall before you move on</h2><div class="recall"><div class="r"><span class="num">01</span><strong>The model requests a tool; application code executes it.</strong></div><div class="r"><span class="num">02</span><strong>A schema describes the name, purpose, and arguments.</strong></div><div class="r"><span class="num">03</span><strong>Results become context for the next model decision.</strong></div><div class="r"><span class="num">04</span><strong>Generated code belongs in an isolated execution environment.</strong></div></div>
           <div class="self-check"><h3>Self-check</h3><details><summary>What does AISuite derive from a Python function?</summary><p>It can use the function name, docstring, and parameter information to build the tool description presented to the model.</p></details><details><summary>Why must weather be fetched before writing a weather note?</summary><p>The writing call needs the weather result as its content, so the first tool output is an input to the second call.</p></details><details><summary>What problem does MCP address?</summary><p>It reduces repeated custom integrations by giving applications a common client–server interface for tools and data sources.</p></details></div>
         </section>
-        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Course evidence + image attribution</p><p>Original English summary based on the local Module 3 course artifacts and the <a href="https://github.com/datawhalechina/agentic-ai/tree/main/3.%20%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%5BTool%20Use%5D">Datawhale China Module 3 reference lessons</a>. The two selected lesson images are reproduced from pinned commit <code>a93ab1d</code> with source links in their captions. The repository contains an <a href="https://github.com/datawhalechina/agentic-ai/blob/main/LICENSE">Apache-2.0 LICENSE</a> while its <a href="https://github.com/datawhalechina/agentic-ai#license">README names CC BY-NC-SA 4.0</a>; attribution is preserved and this site does not claim image ownership.</p></section>
+        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Local course authority</p><p>This chapter is grounded in the complete local Module 3 learner PDF and both local tool-use labs. The runner pseudocode expands the notebooks' manual tool-call path into a compact teaching contract. Notebook files are not linked, and no outside course claims are added.</p></section>
       </article>
     </div>
     <nav class="chapter-pagination" aria-label="Chapter navigation"><a href="module-2.html"><span>Previous module</span><strong>← Reflection</strong></a><a class="next" href="module-4.html"><span>Next module</span><strong>Evaluation →</strong></a></nav>

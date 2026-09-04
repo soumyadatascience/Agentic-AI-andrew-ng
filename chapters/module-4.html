@@ -4,17 +4,27 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Module 4 notes on evaluations, error analysis, component evaluation, fixes, latency, cost, and development process.">
   <title>Let the evidence choose the next fix · Agentic AI Learning Notes</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="module-5-deep-dive.css">
 </head>
-<body class="chapter-body">
+<body class="chapter-body deep-dive-body">
   <a class="skip-link" href="#chapter-content">Skip to chapter</a>
   <header class="site-header chapter-header"><a class="brand" href="../index.html" aria-label="Agentic AI learning notes home"><span class="brand-mark" aria-hidden="true">AI</span><span>Agentic AI · Learning Notes</span></a><a class="back-link" href="../index.html#module-4"><span aria-hidden="true">←</span> Module 4</a></header>
-  <main class="page chapter-page" id="chapter-content">
-    <section class="chapter-hero" aria-labelledby="chapter-title"><div class="chapter-hero-copy"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-4">Module 4</a><span aria-hidden="true">/</span><span aria-current="page">Development process</span></nav><p class="eyebrow">Module 4 · Practical Tips for Building Agentic AI</p><h1 id="chapter-title">Let the evidence choose the next fix.</h1><p>Build a complete prototype, inspect its traces and outputs, measure important failures, then improve the component responsible for the largest share of those failures.</p></div><aside class="chapter-hero-note" aria-label="Chapter details"><span class="note-number">M4</span><dl><div><dt>Focus</dt><dd>Evaluation + analysis</dd></div><div><dt>Evidence</dt><dd>Lessons 4.1–4.8</dd></div><div><dt>Outcome</dt><dd>Prioritize a fix</dd></div></dl></aside></section>
+  <main class="page chapter-page deep-dive-page" id="chapter-content">
+    <section class="chapter-hero deep-dive-hero" aria-labelledby="chapter-title"><div class="chapter-hero-copy"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-4">Module 4</a><span aria-hidden="true">/</span><span aria-current="page">Development process</span></nav><p class="eyebrow">Module 4 · Practical Tips for Building Agentic AI</p><h1 id="chapter-title">Let the evidence choose the next fix.</h1><p>Build a complete prototype, inspect its traces and outputs, measure important failures, then improve the component responsible for the largest share of those failures.</p></div><aside class="chapter-hero-note" aria-label="Chapter details"><span class="note-number">M4</span><dl><div><dt>Focus</dt><dd>Evaluation + analysis</dd></div><div><dt>Evidence</dt><dd>Lessons 4.1–4.8</dd></div><div><dt>Outcome</dt><dd>Prioritize a fix</dd></div></dl></aside></section>
     <section class="chapter-thesis" aria-labelledby="thesis-title"><p class="kicker" id="thesis-title">The chapter in one sentence</p><p class="bigidea">Development alternates between building the workflow and analyzing evidence about where the next improvement will matter most.</p></section>
-    <div class="chapter-shell">
-      <nav class="chapter-nav" aria-label="On this page"><p class="kicker">On this page</p><a href="#evals"><span>01</span>Start with evals</a><a href="#cycle"><span>02</span>The iteration cycle</a><a href="#analysis"><span>03</span>Error analysis</a><a href="#components"><span>04</span>Component evals</a><a href="#fixes"><span>05</span>Address problems</a><a href="#tradeoffs"><span>06</span>Latency + cost</a><a href="#process"><span>07</span>Development path</a></nav>
-      <article class="chapter-article">
+    <div class="chapter-shell deep-dive-shell">
+      <nav class="chapter-nav deep-nav" aria-label="On this page"><p class="kicker">On this page</p>
+        <a href="#evals"><span>01</span>Evaluation contract</a>
+        <a href="#cycle"><span>02</span>Development loop</a>
+        <a href="#architecture"><span>03</span>Evidence system</a>
+        <a href="#analysis"><span>04</span>Error analysis</a>
+        <a href="#contracts"><span>05</span>Low-level contracts</a>
+        <a href="#components"><span>06</span>Component evals</a>
+        <a href="#trace"><span>07</span>Worked trace</a>
+        <a href="#fixes"><span>08</span>Choose the fix</a>
+        <a href="#tradeoffs"><span>09</span>Latency + cost</a>
+        <a href="#process"><span>10</span>Build it yourself</a></nav>
+      <article class="chapter-article deep-dive-article">
         <section class="section card" id="evals" data-section-label="01 · Begin with a small complete system">
           <h2>Prototype first, then turn observed failures into evals</h2><p>The lessons recommend a fast, rough end-to-end prototype. Manually inspect roughly 10–20 outputs, find a recurring problem that matters, and build a small test set that measures it. The eval can grow as the system matures.</p>
           <div class="principles"><article><span>01</span><h3>Invoice due date</h3><p>Record the correct date for each invoice, standardize the output format, and compare extraction with ground truth.</p></article><article><span>02</span><h3>Caption length</h3><p>Count words in every output and test one shared rule: no more than ten words.</p></article><article><span>03</span><h3>Research coverage</h3><p>Ask a model judge how many expert-provided discussion points appear in each report.</p></article><article><span>04</span><h3>Rubric score</h3><p>Use one set of subjective criteria across examples when no per-example answer exists.</p></article></div>
@@ -25,6 +35,51 @@
           <h2>The development loop follows evidence</h2>
           <div class="loop-visual" role="img" aria-label="Course development loop: prototype, inspect, evaluate, analyze, improve, rerun"><ol class="loop-steps loop-steps-six"><li><span class="loop-number">01</span><strong>Prototype</strong><small>Build a complete workflow</small></li><li><span class="loop-number">02</span><strong>Inspect</strong><small>Read outputs and traces</small></li><li class="loop-evidence"><span class="loop-number">03</span><strong>Evaluate</strong><small>Measure an important weakness</small></li><li><span class="loop-number">04</span><strong>Analyze</strong><small>Locate the responsible component</small></li><li><span class="loop-number">05</span><strong>Improve</strong><small>Change that component</small></li><li class="loop-validate"><span class="loop-number">06</span><strong>Rerun</strong><small>Confirm the metric moves</small></li></ol><p class="loop-return"><span aria-hidden="true">↺</span> If the system improves but the score does not, the eval itself may need revision.</p></div>
         </section>
+
+        <section class="section card" id="architecture" data-section-label="03 · Treat evidence as a subsystem">
+          <h2>An evaluation system sits beside the product workflow</h2>
+          <p class="lead">The agent produces outputs for users. The development system preserves inputs, outputs, traces, labels, scores, and failure categories so the team can decide what to change next.</p>
+          <p>Module 4 turns evaluation from a final report into a development control loop. The workflow is built end to end first. A small set of examples reveals an important error mode. An evaluator measures that behavior repeatedly while prompts, models, tools, or algorithms change. Error analysis then uses traces to assign failures to components, and component-level evals make repeated optimization faster and less noisy.</p>
+          <p>The product path and the evaluation path share run artifacts but have different responsibilities. Production components answer the task. Evaluators compare results with ground truth, shared rules, gold-standard talking points, or a rubric. Error analysis does not generate a new answer; it turns poor runs into a distribution of causes. The improvement step changes one component, then both component and end-to-end measures are rerun.</p>
+
+          <figure class="diagram" aria-labelledby="m4-context-title m4-context-caption">
+            <div class="diagram-heading"><p class="diagram-title" id="m4-context-title">Agent development evidence system</p><p class="diagram-level">C4-style · system context</p></div>
+            <div class="system-boundary">
+              <span class="boundary-label">Build and analyze boundary</span>
+              <div class="diagram-row">
+                <div class="c4-box external"><p class="owner">Developer</p><strong>Workflow version</strong><small>Prompts, models, tools, parameters</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box"><p class="owner">Product system</p><strong>End-to-end runner</strong><small>Produces answer and span trace</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box output"><p class="owner">Artifact store</p><strong>Runs + traces</strong><small>Inputs, outputs, intermediate values, timing, cost</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box guard"><p class="owner">Evaluation system</p><strong>Scorers + judges</strong><small>Objective checks or rubric results</small></div>
+              </div>
+              <div class="diagram-turn" aria-hidden="true">↓</div>
+              <div class="diagram-row">
+                <div class="c4-box planner"><p class="owner">Analysis</p><strong>Error attribution</strong><small>Counts which component introduced failures</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box state"><p class="owner">Decision</p><strong>Prioritized fix</strong><small>Change prompt, model, structure, tool, or parameter</small></div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="c4-box external"><p class="owner">Developer</p><strong>Next workflow version</strong><small>Rerun the same evidence path</small></div>
+              </div>
+            </div>
+            <figcaption id="m4-context-caption">The final answer feeds an end-to-end score; the trace feeds diagnosis. The next change should follow the measured failure distribution.</figcaption>
+          </figure>
+
+          <h3>Four kinds of evaluation evidence</h3>
+          <div class="table-wrap">
+            <table class="trace-table">
+              <thead><tr><th>Ground truth</th><th>Scorer</th><th>Course example</th><th>Artifact</th></tr></thead>
+              <tbody>
+                <tr><td>Per-example answer</td><td>Objective code</td><td>Extracted invoice due date equals the manually recorded date</td><td>Boolean or accuracy</td></tr>
+                <tr><td>Shared rule</td><td>Objective code</td><td>Marketing caption contains no more than ten words</td><td>Word count and pass/fail</td></tr>
+                <tr><td>Per-example discussion points</td><td>LLM judge</td><td>Research report includes the gold-standard ideas for that topic</td><td>Score plus explanation</td></tr>
+                <tr><td>Shared rubric</td><td>LLM judge</td><td>Chart has title, labels, appropriate type, and appropriate ranges</td><td>Criterion-level JSON scores</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
         <section class="section card" id="analysis" data-section-label="03 · Find where failures enter">
           <h2>Error analysis turns traces into priorities</h2><p>A trace contains the workflow’s intermediate outputs; an individual step is often called a span. Read the traces for cases with poor final results, judge which steps fall short of what a capable person would produce from the same input, and count the frequency of each failure source.</p>
           <ol class="case-steps"><li><span>Filter</span><div><strong>Study the failed cases.</strong> Correct cases contribute less information about what to fix next.</div></li><li><span>Trace</span><div><strong>Inspect each step.</strong> In a research workflow, check query generation, returned pages, and source selection separately.</div></li><li><span>Label</span><div><strong>Name the component at fault.</strong> An invoice error may begin in PDF-to-text or in the LLM extraction step.</div></li><li><span>Count</span><div><strong>Quantify failure frequency.</strong> Work first on the component responsible for the largest share of important errors.</div></li></ol>
@@ -32,12 +87,99 @@
           <div class="contract-block"><p>Prioritization interface</p><ul class="contract-list"><li><code>count_by_component(ledger) -&gt; priority_distribution</code><small>The distribution turns reviewed traces into a ranked engineering queue.</small></li></ul></div>
           <blockquote><p>The next priority comes from the error distribution, not from the component that is easiest to edit.</p></blockquote>
         </section>
+
+        <section class="section card" id="contracts" data-section-label="05 · Keep scoring and diagnosis explicit">
+          <h2>Framework-free evals are data, scorers, and aggregation</h2>
+          <p>The following Python-like contracts are teaching decompositions of the course examples. They make visible what an evaluation library would package: test cases, a runner, one or more scorers, and a summary that remains comparable across workflow versions.</p>
+          <pre class="code-contract"><code><span class="keyword">def</span> evaluate(workflow, cases, scorers):
+    runs = []
+    <span class="keyword">for</span> case in cases:
+        result = workflow(case.input)
+        scores = {
+            scorer.name: scorer(case, result)
+            <span class="keyword">for</span> scorer in scorers
+        }
+        runs.append({
+            <span class="value">"case_id"</span>: case.id,
+            <span class="value">"result"</span>: result.answer,
+            <span class="value">"trace"</span>: result.trace,
+            <span class="value">"scores"</span>: scores,
+        })
+    <span class="keyword">return</span> aggregate(runs)
+
+<span class="keyword">def</span> exact_due_date(case, result):
+    extracted = parse_yyyy_mm_dd(result.answer)
+    <span class="keyword">return</span> extracted == case.expected_date
+
+<span class="keyword">def</span> rubric_judge(case, result, rubric):
+    response = judge_model(case.input, result.answer, rubric)
+    <span class="keyword">return</span> parse_criterion_scores(response)
+
+<span class="keyword">def</span> attribute_failures(failed_runs, component_names):
+    counts = {name: 0 <span class="keyword">for</span> name in component_names}
+    <span class="keyword">for</span> run in failed_runs:
+        cause = inspect_trace_and_label(run.trace)
+        counts[cause] += 1
+    <span class="keyword">return</span> sort_descending(counts)</code></pre>
+          <p><code>evaluate</code> does not decide whether a metric is meaningful; the developer chooses scorers based on observed failures. <code>exact_due_date</code> demonstrates objective comparison with per-example ground truth. <code>rubric_judge</code> demonstrates structured subjective grading. <code>attribute_failures</code> represents the manual error-analysis table: inspect poor examples, label the component that failed, then count categories.</p>
+
+          <h3>Metric ownership must stay clear</h3>
+          <div class="contract-list">
+            <section class="contract"><div><h3>Test case set</h3><p>Holds representative inputs and any per-example expected data.</p></div><dl><div><dt>Owned by</dt><dd>Developer or domain reviewer</dd></div><div><dt>Mutates</dt><dd>Only when coverage gaps are discovered</dd></div><div><dt>Returns</dt><dd>Stable inputs for comparison</dd></div></dl></section>
+            <section class="contract"><div><h3>Workflow runner</h3><p>Executes one version and returns the final answer plus trace.</p></div><dl><div><dt>Owned by</dt><dd>Product application</dd></div><div><dt>Reads</dt><dd>One test input and configured dependencies</dd></div><div><dt>Returns</dt><dd>Run artifacts, not a score</dd></div></dl></section>
+            <section class="contract"><div><h3>Scorer</h3><p>Transforms a case and result into a boolean, number, or criterion record.</p></div><dl><div><dt>Owned by</dt><dd>Evaluation code or judge prompt</dd></div><div><dt>Reads</dt><dd>Only evidence needed by the metric</dd></div><div><dt>Returns</dt><dd>Machine-readable score and explanation</dd></div></dl></section>
+            <section class="contract"><div><h3>Error-analysis ledger</h3><p>Associates failed cases with the span where the defect entered.</p></div><dl><div><dt>Owned by</dt><dd>Developer review process</dd></div><div><dt>Reads</dt><dd>Failed outputs and traces</dd></div><div><dt>Returns</dt><dd>Prioritized category counts</dd></div></dl></section>
+          </div>
+
+          <h3>Evaluation failure modes</h3>
+          <div class="mapping-list">
+            <div class="mapping-row"><strong>Metric blindness</strong><p>The score misses a problem a human sees.</p><p class="framework-label">Improve the metric, not only the workflow.</p></div>
+            <div class="mapping-row"><strong>Noisy end-to-end signal</strong><p>Later stochastic steps hide a small improvement in the component under test.</p><p class="framework-label">Add a component-level eval.</p></div>
+            <div class="mapping-row"><strong>Judge inconsistency</strong><p>A vague comparison or position bias changes the verdict.</p><p class="framework-label">Use criterion-level rubrics and structured output.</p></div>
+            <div class="mapping-row"><strong>Unrepresentative set</strong><p>A tiny test set contains only easy cases.</p><p class="framework-label">Add examples from observed failures.</p></div>
+            <div class="mapping-row"><strong>Optimization drift</strong><p>A component metric improves while user-facing quality worsens.</p><p class="framework-label">Rerun the end-to-end eval.</p></div>
+          </div>
+        </section>
         <section class="section card" id="components" data-section-label="04 · Isolate the weak step">
           <h2>Component-level evals produce a clearer, cheaper signal</h2><p>Rerunning an entire search–draft–reflection workflow after a small search change is expensive and noisy. Later stochastic steps can hide a modest improvement in the component being tuned.</p>
           <figure class="lesson-figure"><img src="../assets/reference/datawhale-agentic-ai-a93ab1d/m4-research-agent-component-eval.png" alt="Course research-agent workflow from query through web search and source fetching to essay drafting, paired with example failures that motivate evaluating the search component separately." loading="lazy" decoding="async"><figcaption><span><strong>Reference visual · Lesson 4.4</strong> A research-agent trace reveals where component evaluation can replace an expensive end-to-end rerun.</span><a href="https://github.com/datawhalechina/agentic-ai/blob/a93ab1d8546cca8b508a72f0f2c385777d5f1403/images/4.4.1.png">4.4.1.png at pinned commit <span aria-hidden="true">↗</span></a></figcaption></figure>
           <p>The Module 4 lab makes the research step independently testable with <code>find_references</code>. It extracts returned URLs, checks them against a preferred-domain list, computes the preferred-source ratio, and returns a pass/fail result plus a Markdown summary.</p>
           <div class="contract-block"><p>Focused evaluation interfaces</p><ul class="contract-list"><li><code>date_eval(extracted, expected) -&gt; bool</code></li><li><code>length_eval(text, limit) -&gt; bool</code></li><li><code>coverage_eval(report, gold_points) -&gt; {score, explanation}</code></li><li><code>preferred_source_ratio(urls, preferred_domains) -&gt; metric</code></li></ul></div>
           <aside class="try-code"><span class="try-label">Try it in code</span><h3>Turn one failure into an instrument.</h3><p>Create a small error ledger from printed traces, count failures by component, then implement the matching focused evaluator. Change one component decision and rerun the same metric before returning to the end-to-end score.</p></aside>
+        </section>
+
+        <section class="section card" id="trace" data-section-label="07 · Turn one bad answer into a priority">
+          <h2>A worked error-analysis trace</h2>
+          <p class="lead">Suppose a research report on recent black-hole science misses a high-profile development. The final omission is an observation; the trace is how the team finds the responsible component.</p>
+          <div class="table-wrap">
+            <table class="trace-table">
+              <caption>From failed output to targeted component experiment</caption>
+              <thead><tr><th>Stage</th><th>Observed artifact</th><th>Question</th><th>Decision</th></tr></thead>
+              <tbody>
+                <tr><td>01</td><td>Final report omits a gold-standard talking point</td><td>Does the end-to-end scorer detect the miss?</td><td>Mark the case failed and open its trace</td></tr>
+                <tr><td>02</td><td>Generated search terms</td><td>Were the terms specific enough?</td><td>Terms appear usable; continue downstream</td></tr>
+                <tr><td>03</td><td>Returned search results include too many low-quality pages</td><td>Did the search component surface appropriate sources?</td><td>Label <em>search results</em> as the failure source</td></tr>
+                <tr><td>04</td><td>Error-analysis table across failed prompts</td><td>How often does this category recur?</td><td>Search-result quality accounts for the largest measured share</td></tr>
+                <tr><td>05</td><td>Gold-standard domain list plus raw search URLs</td><td>Can the weak component be measured directly?</td><td>Create a preferred-source ratio or related component score</td></tr>
+                <tr><td>06</td><td>Component scores across parameter choices</td><td>Do result count, date range, or provider change the signal?</td><td>Keep the best measured configuration</td></tr>
+                <tr><td>07</td><td>New full workflow runs</td><td>Did the final research quality also improve?</td><td>Confirm with the end-to-end eval</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The course does not claim that every research failure begins in search. The point is procedural: inspect the actual trace and count evidence before choosing a fix. Another case may expose poor source selection or weak reasoning over fetched text. Invoice traces similarly separate PDF-to-text errors from LLM date-selection errors. Email traces separate query drafting, database behavior, and response tone.</p>
+
+          <h3>Try it in code</h3>
+          <ol class="try-sequence">
+            <li>Collect 10-20 representative tasks and store the expected field, rule, talking points, or rubric beside each input.</li>
+            <li>Run the complete workflow and retain final outputs plus span traces.</li>
+            <li>Implement the cheapest objective scorer that captures one important failure.</li>
+            <li>For subjective quality, request criterion-level JSON rather than a single preference.</li>
+            <li>Filter failed cases, inspect traces, and label the first component where the run became unsatisfactory.</li>
+            <li>Count failure categories and choose the highest-impact component.</li>
+            <li>Build a focused component eval, change one parameter or implementation, and rerun it.</li>
+            <li>Rerun the end-to-end eval before accepting the change.</li>
+            <li>Once quality is adequate, measure every span's latency and cost contribution before optimizing.</li>
+          </ol>
         </section>
         <section class="section card" id="fixes" data-section-label="05 · Match the fix to the component">
           <h2>Different components require different interventions</h2>
@@ -56,7 +198,7 @@
           <div class="recall"><div class="r"><span class="num">01</span><strong>Start with a small, complete prototype.</strong></div><div class="r"><span class="num">02</span><strong>Use traces to localize recurring failures.</strong></div><div class="r"><span class="num">03</span><strong>Tune a component with a component-level metric.</strong></div><div class="r"><span class="num">04</span><strong>Recheck the final end-to-end result.</strong></div></div>
           <div class="self-check"><h3>Self-check</h3><details><summary>Why begin with 10–20 examples?</summary><p>A small set is enough to establish a useful signal quickly; it can expand as the workflow and evaluation mature.</p></details><details><summary>Why can a component eval be clearer than an end-to-end eval?</summary><p>It isolates the changed step, avoids the cost of the full workflow, and reduces noise introduced by later components.</p></details><details><summary>When should latency and cost become the main optimization target?</summary><p>After output quality meets the application’s needs; cost becomes a priority when usage makes it materially important.</p></details></div>
         </section>
-        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Course evidence + image attribution</p><p>Original English summary based on lessons 4.1–4.8 and the component-evaluation lab in the <a href="https://github.com/datawhalechina/agentic-ai/tree/main/4.%20%E6%9E%84%E5%BB%BAAgentic%20AI%E7%9A%84%E5%AE%9E%E7%94%A8%E6%8A%80%E5%B7%A7%5BPractical%20Tips%20for%20Building%20Agentic%20AI%5D">Datawhale China Module 4 reference</a>. Contributor commentary identified in the source was excluded. The two selected lesson images are reproduced from pinned commit <code>a93ab1d</code> with source links in their captions. The repository contains an <a href="https://github.com/datawhalechina/agentic-ai/blob/main/LICENSE">Apache-2.0 LICENSE</a> while its <a href="https://github.com/datawhalechina/agentic-ai#license">README names CC BY-NC-SA 4.0</a>; attribution is preserved and this site does not claim image ownership.</p></section>
+        <section class="source-note" aria-labelledby="sources-title"><p class="kicker" id="sources-title">Local course authority</p><p>This chapter is grounded in the complete local Module 4 learner PDF and the existing course notes. The evaluator and error-ledger functions are teaching decompositions of the course process diagrams and examples. No notebook links or outside course claims are included.</p></section>
       </article>
     </div>
     <nav class="chapter-pagination" aria-label="Chapter navigation"><a href="module-3.html"><span>Previous module</span><strong>← Tool use</strong></a><a class="next" href="module-5.html"><span>Next module</span><strong>Planning + multi-agent →</strong></a></nav>
