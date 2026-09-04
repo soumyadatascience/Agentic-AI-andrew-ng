@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A module-first learning path through Modules 1–5 of Andrew Ng's Agentic AI course, with course-grounded notes, selected attributed visuals, and original notebooks.">
+  <meta name="description" content="A module-first learning path through Modules 1–5 of Andrew Ng's Agentic AI course, with course-grounded notes, implementation contracts, and selected attributed visuals.">
   <title>Agentic AI · Module Learning Path</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
@@ -19,24 +19,24 @@
       <div class="home-hero-content">
         <p class="eyebrow">Andrew Ng · Agentic AI</p>
         <h1 id="home-title">From workflow design to systematic improvement.</h1>
-        <p class="home-intro">Original English summaries of agentic foundations, reflection, tool use, evaluation, planning, and multi-agent systems—grounded in the course lessons, reference notes, and lab notebooks.</p>
+        <p class="home-intro">Original English summaries of agentic foundations, reflection, tool use, evaluation, planning, and multi-agent systems—grounded in the course lessons and labs.</p>
         <a class="primary-link" href="#module-1">Start with Module 1 <span aria-hidden="true">↓</span></a>
       </div>
       <aside class="hero-note path-note" aria-label="How the learning path works">
         <p class="kicker">How to use this library</p>
-        <ol><li><span>01</span><strong>Read in module order</strong></li><li><span>02</span><strong>Pause for each self-check</strong></li><li><span>03</span><strong>Practice in available notebooks</strong></li></ol>
+        <ol><li><span>01</span><strong>Read in module order</strong></li><li><span>02</span><strong>Trace the interfaces</strong></li><li><span>03</span><strong>Pause for each self-check</strong></li></ol>
       </aside>
     </section>
     <section class="course-overview" aria-labelledby="overview-title">
       <div class="overview-copy"><p class="kicker">Course overview</p><h2 id="overview-title">Five modules, one engineering practice.</h2></div>
       <div class="artifact-key" aria-label="Relationship between chapter notes and course evidence">
         <article><span class="artifact-icon" aria-hidden="true">Aa</span><div><h3>Chapter notes explain</h3><p>Each module teaches its core mental model once, then connects it to design choices and recall prompts.</p></div></article>
-        <article><span class="artifact-icon artifact-icon-code" aria-hidden="true">&lt;/&gt;</span><div><h3>Evidence stays visible</h3><p>Each chapter links to its lesson reference and selected visual sources; Modules 2–3 also link to local notebooks.</p></div></article>
+        <article><span class="artifact-icon artifact-icon-code" aria-hidden="true">&lt;/&gt;</span><div><h3>Interfaces stay concrete</h3><p>Each chapter turns the course workflows into compact contracts, traces, and implementation prompts beside the conceptual explanation.</p></div></article>
       </div>
       <nav class="module-jump" aria-label="Jump to a course module"><a href="#module-1"><span>01</span>Foundations</a><a href="#module-2"><span>02</span>Reflection</a><a href="#module-3"><span>03</span>Tool use</a><a href="#module-4"><span>04</span>Evaluation</a><a href="#module-5"><span>05</span>Planning</a></nav>
     </section>
     <section class="module-library" aria-labelledby="modules-title">
-      <div class="section-heading"><div><p class="kicker">The learning path</p><h2 id="modules-title">Course modules</h2></div><p class="chapter-count">5 chapters · 4 local notebooks · 2 reference labs</p></div>
+      <div class="section-heading"><div><p class="kicker">The learning path</p><h2 id="modules-title">Course modules</h2></div><p class="chapter-count">5 chapters · one connected engineering practice</p></div>
       <div class="module-list">
         <article class="module-row module-row-featured" id="module-1">
           <div class="module-number">01</div><div class="module-copy">
@@ -48,18 +48,18 @@
         </article>
         <article class="module-row module-row-featured" id="module-2">
           <div class="module-number">02</div><div class="module-copy">
-            <div class="module-heading"><div><p class="module-state">Lessons + notebooks</p><h3>Reflection Design Pattern</h3></div><span class="status-pill status-pill-ready">1 chapter</span></div>
+            <div class="module-heading"><div><p class="module-state">Course lessons + lab traces</p><h3>Reflection Design Pattern</h3></div><span class="status-pill status-pill-ready">1 chapter</span></div>
             <p class="module-description">Add a deliberate review-and-revision pass, strengthen it with feedback from execution, and measure whether the extra pass helps.</p>
             <a class="featured-chapter" href="chapters/module-2.html" aria-label="Read Module 2: Reflection earns its extra pass"><span class="chapter-label">Chapter 01</span><span class="featured-chapter-copy"><strong>Reflection earns its extra pass</strong><small>Draft, review, external feedback, chart and SQL labs, and evaluation.</small></span><span class="chapter-arrow" aria-hidden="true">↗</span></a>
-            <div class="notebook-shelf" aria-labelledby="m2-notebooks-title"><p class="shelf-label" id="m2-notebooks-title">Hands-on source notebooks</p><div class="notebook-links"><a href="M2_UGL_1.ipynb"><span class="file-mark" aria-hidden="true">NB</span><span><strong>Chart Generation</strong><small>M2_UGL_1.ipynb</small></span></a><a href="M2_UGL_2.ipynb"><span class="file-mark" aria-hidden="true">NB</span><span><strong>Improving SQL Generation with Reflection</strong><small>M2_UGL_2.ipynb</small></span></a></div></div>
+            <div class="evidence-shelf"><span class="evidence-tag">Course-grounded</span><p>Four-stage reflection contract, external-feedback map, and chart and SQL traces.</p></div>
           </div>
         </article>
         <article class="module-row module-row-featured" id="module-3">
           <div class="module-number">03</div><div class="module-copy">
-            <div class="module-heading"><div><p class="module-state">Lessons + notebooks</p><h3>Tool Use</h3></div><span class="status-pill status-pill-ready">1 chapter</span></div>
+            <div class="module-heading"><div><p class="module-state">Course lessons + lab traces</p><h3>Tool Use</h3></div><span class="status-pill status-pill-ready">1 chapter</span></div>
             <p class="module-description">Follow the loop from a model's structured tool request, through function execution, back to a result the model can use.</p>
             <a class="featured-chapter" href="chapters/module-3.html" aria-label="Read Module 3: Tools let the workflow act"><span class="chapter-label">Chapter 01</span><span class="featured-chapter-copy"><strong>Tools let the workflow act</strong><small>Tool schemas, function and email labs, code execution, and MCP.</small></span><span class="chapter-arrow" aria-hidden="true">↗</span></a>
-            <div class="notebook-shelf" aria-labelledby="m3-notebooks-title"><p class="shelf-label" id="m3-notebooks-title">Hands-on source notebooks</p><div class="notebook-links"><a href="M3_UGL_1.ipynb"><span class="file-mark" aria-hidden="true">NB</span><span><strong>Turning Functions into Tools</strong><small>M3_UGL_1.ipynb</small></span></a><a href="M3_UGL_2.ipynb"><span class="file-mark" aria-hidden="true">NB</span><span><strong>Email Assistant Workflow</strong><small>M3_UGL_2.ipynb</small></span></a></div></div>
+            <div class="evidence-shelf"><span class="evidence-tag">Course-grounded</span><p>Manual orchestration, concrete schemas, code execution boundaries, and MCP.</p></div>
           </div>
         </article>
         <article class="module-row module-row-featured" id="module-4">
@@ -82,7 +82,7 @@
       <aside class="reference-disclosure" aria-labelledby="reference-title">
         <p class="kicker">Reference and reuse</p>
         <h3 id="reference-title">Original summaries, cautious asset use.</h3>
-        <p>These English notes synthesize the local notebooks and the linked Datawhale reference repository. Selected course visuals are reproduced from pinned commit <code>a93ab1d</code>, never more than two per module, with a direct source link and meaningful alt text beside each use. The repository includes an Apache-2.0 license file while its README names CC BY-NC-SA 4.0; attribution is preserved, the inconsistency is disclosed, and this site does not claim ownership of those images. Other diagrams are original HTML and CSS.</p>
+        <p>These English notes synthesize the local course artifacts and the linked Datawhale reference repository. Selected course visuals are reproduced from pinned commit <code>a93ab1d</code>, never more than two per module, with a direct source link and meaningful alt text beside each use. The repository includes an Apache-2.0 license file while its README names CC BY-NC-SA 4.0; attribution is preserved, the inconsistency is disclosed, and this site does not claim ownership of those images. Other diagrams are original HTML and CSS.</p>
         <div class="reference-links"><a href="https://github.com/datawhalechina/agentic-ai">Reference repository <span aria-hidden="true">↗</span></a><a href="https://github.com/datawhalechina/agentic-ai/blob/main/LICENSE">License file <span aria-hidden="true">↗</span></a><a href="https://github.com/datawhalechina/agentic-ai#license">README license notice <span aria-hidden="true">↗</span></a></div>
       </aside>
     </section>
