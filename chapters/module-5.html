@@ -1,381 +1,65 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Module 5 engineering notes on planning, code execution, state boundaries, traces, and multi-agent orchestration.">
-  <title>Inside the planning boundary · Module 5</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314241e'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='22' font-weight='700' fill='%23d8ff43'%3EAI%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="module-5-deep-dive.css">
-</head>
-<body class="chapter-body deep-dive-body">
-  <a class="skip-link" href="#chapter-content">Skip to chapter</a>
-  <header class="site-header chapter-header">
-    <a class="brand" href="../index.html" aria-label="Agentic AI learning notes home"><span class="brand-mark" aria-hidden="true">AI</span><span>Agentic AI · Learning Notes</span></a>
-    <a class="back-link" href="../index.html#module-5"><span aria-hidden="true">←</span> Course map</a>
-  </header>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Agentic AI study notes with concrete examples, C4 diagrams, code, and runnable practice."><title>05 · Planning &amp; teams · AI engineering notebook</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23173e32'/%3E%3Ctext x='20' y='28' text-anchor='middle' fill='%23dcf492' font-size='28' font-family='Georgia'%3Ea%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../styles.css"><script src="../app.js" defer></script></head><body data-module="5"><a class="skip-link" href="#main">Skip to the notes</a><header class="topbar"><a class="notebook-brand" href="../index.html"><span class="brand-symbol" aria-hidden="true">a.</span> AI engineering <span class="brand-subtitle">/ notebook</span></a><div class="topbar-right"><a href="../index.html">Course library ↗</a><span class="edition">Andrew Ng · Agentic AI</span></div><div class="reading-progress" aria-hidden="true"></div></header><details class="mobile-toc"><summary>In this chapter · Planning & teams</summary><nav aria-label="Mobile chapter navigation"><a href="#planning">01 · What planning changes</a><a href="#plan">02 · Plans as data and code</a><a href="#execution">03 · Execution & authority</a><a href="#purchase">04 · The purchase trace</a><a href="#practice">05 · Runnable state exercise</a><a href="#team">06 · The multi-agent pipeline</a><a href="#coordination">07 · Control & communication</a><a href="#recall">08 · Recall & checklist</a></nav></details><div class="layout"><aside class="sidebar"><p class="side-caption">Module 05 / 05</p><p class="course-name">Planning & teams</p><nav class="toc" aria-label="Chapter sections"><a href="#planning"><span>01</span> What planning changes</a><a href="#plan"><span>02</span> Plans as data and code</a><a href="#execution"><span>03</span> Execution & authority</a><a href="#purchase"><span>04</span> The purchase trace</a><a href="#practice"><span>05</span> Runnable state exercise</a><a href="#team"><span>06</span> The multi-agent pipeline</a><a href="#coordination"><span>07</span> Control & communication</a><a href="#recall"><span>08</span> Recall & checklist</a></nav><div class="side-bottom"><p class="side-caption">Read · trace · build</p><p>Explain planning boundaries, test state changes and retries, and distinguish fixed pipelines from planner-managed teams.</p><a href="../labs/module_5_planning.py" download>↓ Python practice file</a><a href="#sources">Sources & teaching notes</a></div></aside><main class="reading" id="main"><header class="chapter-intro"><p class="crumb">Agentic AI <span>/</span> Module 05 <span>/</span> Planning & teams</p><p class="eyebrow">Patterns for greater autonomy</p><h1>Plan the work.<br>Keep control explicit.</h1><p class="intro-text">Treat plans as proposals, make state changes inspectable, and coordinate specialized roles through concrete handoffs.</p><div class="chapter-meta"><span>05 / 05 modules</span><span>Concepts + worked examples + practice</span><span>Python basics helpful</span></div><div class="outcome"><span class="arrow" aria-hidden="true">↳</span><p><strong>By the end of this chapter</strong>Explain planning boundaries, test state changes and retries, and distinguish fixed pipelines from planner-managed teams.</p></div></header><section class="lesson" id="planning" data-nav="What planning changes"><p class="section-kicker">01 / What planning changes</p><h2>A plan is an artifact before it is an action.</h2><p>In a fixed workflow, application code decides the route before the request arrives. In a planning workflow, the model proposes a route for the current goal using descriptions of the available capabilities.</p><div class="definition">Request → proposed plan → execution → observed result.</div><p>Consider “Do you have any round sunglasses under $100 in stock?” The plan needs to find matching products, check availability, apply the price ceiling, and answer from the records. A return needs a different sequence: identify the purchase, inspect the item, and apply the return policy.</p><p>The course’s email example similarly composes search, reply, and archive for a particular request. Planning changes which steps are selected or ordered; application code still executes them.</p><figure class="c4"><div class="c4-heading"><strong>A customer-service planning application</strong><span>C4 · System context</span></div><div class="context-layout"><div class="c4-person"><small>Person</small><strong>Customer</strong><p>Submits a task<br>receives the result</p></div><div class="c4-subject"><small>Software system in scope</small><strong>Customer-service application</strong><p>Interprets a request, executes permitted operations, and returns evidence-backed results.</p></div><div class="c4-dependencies"><div><small>External software system</small><strong>Model service</strong><p>← Requests a plan; receives tool steps or code</p></div><div><small>External software system</small><strong>Store records service</strong><p>← Reads inventory and records purchases or returns</p></div></div></div><figcaption>Person → application: request; application → person: result. Each external dependency is outside the application boundary. Green identifies the system being studied; gray identifies external systems.</figcaption></figure><aside class="note"><p>This is an architectural view. In the local demonstration, TinyDB tables live in the notebook environment; an external store service is a deployment choice shown here to clarify ownership, not a claim about the notebook’s deployment.</p></aside></section>
+<section class="lesson" id="plan" data-nav="Plans as data and code"><p class="section-kicker">02 / Plans as data and code</p><h2>Make the plan’s data dependencies explicit.</h2><p>The course first shows plans as steps in text, then as JSON. Structured plans expose tool names, arguments, and references to prior results. The application must resolve those references before dispatch.</p><div class="code-panel"><div class="code-heading"><span>JSON · teaching plan, not a tool API schema</span><button class="copy js-only" type="button">Copy</button></div><pre><code>{
+  &quot;plan&quot;: [
+    {&quot;step&quot;: 1, &quot;tool&quot;: &quot;get_item_descriptions&quot;,
+     &quot;args&quot;: {&quot;query&quot;: &quot;round sunglasses&quot;}},
+    {&quot;step&quot;: 2, &quot;tool&quot;: &quot;check_inventory&quot;,
+     &quot;args&quot;: {&quot;items_from_step&quot;: 1}},
+    {&quot;step&quot;: 3, &quot;tool&quot;: &quot;get_item_price&quot;,
+     &quot;args&quot;: {&quot;items_from_step&quot;: 2}}
+  ]
+}</code></pre></div><p>The reference field <code>items_from_step</code> is an explanatory convention. It is not a magical variable and is not shown as a verbatim course API. A runner reads the stored result of that step, validates it, and constructs the next call. The final answer also needs to enforce the requested price constraint.</p><h3>Why express a plan as code?</h3><p>A long menu of narrow data tools can become brittle: filter each month, compute each aggregate, repeat, then compare. Python can express filtering, grouping, and sorting in a compact program. The course shows code for recent transactions and unique transactions as examples.</p><div class="code-panel"><div class="code-heading"><span>Plan envelope · intentionally incomplete illustration</span><button class="copy js-only" type="button">Copy</button></div><pre><code>&lt;execute_python&gt;
+# Plan: read the data, filter the request, compute the answer.
+# The application must provide a suitable execution environment.
+answer_text = &quot;...&quot;
+&lt;/execute_python&gt;</code></pre></div><p>Code is more expressive, so the execution boundary matters more. Extracting tags makes the program inspectable; it does not make the program safe.</p><div class="check"><p class="panel-label">Pause & reason</p><p>A plan says “results from step 1.” What must the runner do?</p><details><summary>Reveal the reasoning</summary><p>Resolve a real stored artifact, validate the expected shape, and pass concrete arguments. Natural-language references do not bind themselves to tool inputs.</p></details></div></section>
+<section class="lesson" id="execution" data-nav="Execution & authority"><p class="section-kicker">03 / Execution & authority</p><h2>Separate the lab from the guarantees you need.</h2><figure class="c4"><div class="c4-heading"><strong>Inside the notebook application</strong><span>C4-style · Component view</span></div><div class="c4-boundary"><p class="panel-label">Application process · Python container</p><ol class="component-grid"><li><small>Python component</small><strong>Context constructor</strong><p>Combines request, live schema/samples, and policies.</p><code>question + tables → prompt</code></li><li><small>Python component</small><strong>Plan generator</strong><p>Calls the model and returns tagged code.</p><code>prompt → plan_with_code</code></li><li><small>Python component</small><strong>Code extractor / executor</strong><p>Extracts text and calls exec with supplied objects.</p><code>code + namespace → effects or exception</code></li><li><small>Python component</small><strong>Result packager</strong><p>Captures answer, stdout, error, and after-state tables.</p><code>run → artifact bundle</code></li></ol></div><figcaption>Numbered relationships show the primary handoff order inside one application process. These are teaching decompositions of responsibilities, not additional notebook APIs.</figcaption></figure><p>The notebook’s <code>generate_llm_code</code> constructs the proposal. <code>execute_generated_code</code> extracts the program and executes it. <code>customer_service_agent</code> orchestrates generation, before/after inspection, and result packaging.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Boundary</th><th>What the notebook implements</th><th>What it does not establish</th></tr></thead><tbody><tr><td>Generation</td><td>Prompt asks for request-derived constraints and policies</td><td>Independent enforcement of those policies</td></tr><tr><td>Execution</td><td>exec with supplied globals and locals; exception capture</td><td>A secure sandbox or a separate plan validator</td></tr><tr><td>Business writes</td><td>Generated code can reach table objects</td><td>Rollback or concurrency control</td></tr><tr><td>Results</td><td>Code, stdout, error, answer, table snapshots</td><td>Guaranteed truthful answer or a validated status field</td></tr></tbody></table></div><aside class="note"><p><strong>Important correction:</strong> a dictionary named <code>SAFE_GLOBALS</code> is not a security boundary. The inspected executor does not supply a standalone <code>validate_plan</code> function. Its prompt requests disciplined behavior; application enforcement is a separate engineering responsibility.</p></aside><p>The prompt asks generated code to set <code>answer_text</code> and <code>STATUS</code>. The concrete executor returns an <code>answer</code> field and captured output; it does not return a separately validated status field. Inspect the actual result contract instead of inferring it from prompt wording.</p><div class="code-panel"><div class="code-heading"><span>Notebook contracts · condensed, not copy-and-run code</span><button class="copy js-only" type="button">Copy</button></div><pre><code>generate_llm_code(question, inventory_tbl=..., transactions_tbl=...)
+    → full model response
 
-  <main class="page chapter-page deep-dive-page" id="chapter-content">
+execute_generated_code(content, db=..., inventory_tbl=...,
+                       transactions_tbl=..., user_request=...)
+    → code, stdout, error, answer, inventory_tbl, transactions_tbl
 
-    <section class="chapter-hero deep-dive-hero" aria-labelledby="chapter-title">
-      <div class="chapter-hero-copy">
-        <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Course</a><span aria-hidden="true">/</span><a href="../index.html#module-5">Module 5</a><span aria-hidden="true">/</span><span aria-current="page">Planning boundaries</span></nav>
-        <p class="eyebrow">Module 5 · Framework-free architecture</p>
-        <h1 id="chapter-title">Inside the planning boundary.</h1>
-        <p>A plan is not autonomy by magic. It is an intermediate artifact that must cross explicit boundaries before code can read data, mutate state, or hand work to another agent.</p>
-      </div>
-      <aside class="chapter-hero-note" aria-label="Chapter details">
-        <span class="note-number">M5</span>
-        <dl>
-          <div><dt>Form</dt><dd>Design document</dd></div>
-          <div><dt>Level</dt><dd>Implementation</dd></div>
-          <div><dt>Focus</dt><dd>Control + artifacts</dd></div>
-        </dl>
-      </aside>
-    </section>
-
-    <section class="chapter-thesis" aria-labelledby="thesis-title">
-      <p class="kicker" id="thesis-title">The governing idea</p>
-      <p class="bigidea">The LLM may propose a route through the work. The application still owns the interfaces, approved capabilities, state boundary, execution policy, and evidence that says what happened.</p>
-    </section>
-
-    <div class="chapter-shell deep-dive-shell">
-      <nav class="chapter-nav deep-nav" aria-label="On this page">
-        <p class="kicker">On this page</p>
-        <a href="#answer-is-not-workflow"><span>01</span>Answer vs. workflow</a>
-        <a href="#plan-artifact"><span>02</span>Plan as artifact</a>
-        <a href="#function-boundaries"><span>03</span>Function boundaries</a>
-        <a href="#execution-trace"><span>04</span>Execution trace</a>
-        <a href="#trace-is-artifact"><span>05</span>Trace as evidence</a>
-        <a href="#multi-agent"><span>06</span>Multi-agent pipeline</a>
-        <a href="#control-models"><span>07</span>Control models</a>
-        <a href="#build-it"><span>08</span>Build it yourself</a>
-      </nav>
-
-      <article class="chapter-article deep-dive-article">
-        <section class="section card" id="answer-is-not-workflow" data-section-label="01 · Begin at the operational boundary">
-          <h2>A plausible answer is not an operational workflow</h2>
-          <p class="lead">A direct model call can describe what should happen. The moment the request touches inventory, transactions, files, or another agent, description is no longer enough.</p>
-          <p>Consider the customer question, “Do you have any round sunglasses in stock that are under $100?” A model can produce a fluent sentence from its own language ability, but the store needs an answer grounded in live records. It must interpret <em>round</em> as a product constraint, read current stock, apply a price ceiling, and return a short response. For a purchase or return, the stakes rise: the workflow must also preserve inventory and transaction consistency.</p>
-          <p>The application therefore cannot hand ownership of the operation to a single generated paragraph. It needs a route from intent to evidence. The course introduces planning as the mechanism that proposes this route at runtime. In the code-execution lab, the plan is Python: comments explain the steps, executable statements perform them, and named outputs expose the result.</p>
-          <div class="boundary-note">
-            <p><strong>Separate capability from authority.</strong> The LLM is capable of composing filters, calculations, and updates. The executor determines which objects and helpers the generated code can reach. The state tables remain the operational source of truth.</p>
-          </div>
-          <p>This separation is the durable engineering lesson. The model can choose a request-specific sequence without the application pretending the sequence is safe merely because it was generated confidently.</p>
-
-          <figure class="lesson-figure">
-            <img src="../assets/reference/datawhale-agentic-ai-a93ab1d/m5-customer-service-planning.png" alt="Course diagram showing a customer request moving through an LLM-created sequence of description, inventory, and price checks." loading="eager" decoding="async">
-            <figcaption><span><strong>Course reference · customer-service planning.</strong> The sequence changes with the request; the available capabilities remain defined by the application.</span></figcaption>
-          </figure>
-        </section>
-
-        <section class="section card" id="plan-artifact" data-section-label="02 · Make planning inspectable">
-          <h2>A plan is an intermediate artifact, not magical autonomy</h2>
-          <p>In a fixed workflow, the developer decides the order of operations before the request arrives. In a planning workflow, the model receives the goal, data description, available helpers, and policy, then writes a route for the current request. That route may be a structured list of tool calls or executable code. Either way, it is produced <em>between</em> the request and the effects.</p>
-          <p>Calling the plan an artifact matters because artifacts can be extracted, checked, logged, rejected, executed, and compared with results. A plan is not yet a state change. It is a proposal encoded in a form the rest of the application can process.</p>
-
-          <figure class="diagram" aria-labelledby="context-diagram-title context-diagram-caption">
-            <div class="diagram-heading"><p class="diagram-title" id="context-diagram-title">Customer-service planning system</p><p class="diagram-level">C4-style · system context</p></div>
-            <div class="system-boundary">
-              <span class="boundary-label">Customer-service agent system boundary</span>
-              <div class="diagram-row">
-                <div class="c4-box external"><p class="owner">External person</p><strong>User + request</strong><small>Natural-language question or instruction</small></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box"><p class="owner">Application-owned</p><strong>Agent interface</strong><small>Accepts request; assembles workflow</small></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box planner"><p class="owner">Model-owned proposal</p><strong>LLM code planner</strong><small>Returns tagged plan-with-code</small></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box guard"><p class="owner">Application-owned gate</p><strong>Extraction + validation</strong><small>Separates proposal from execution</small></div>
-              </div>
-              <div class="diagram-turn" aria-hidden="true">↓</div>
-              <div class="diagram-row">
-                <div class="c4-box guard"><p class="owner">Application-owned runtime</p><strong>Approved Python executor</strong><small>Controlled namespace; captures outputs</small></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box state"><p class="owner">Operational state</p><strong>Inventory + transactions</strong><small>Reads, validated mutations, running balance</small></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box output"><p class="owner">Observable result</p><strong>Answer + status + logs</strong><small>Human response and engineering evidence</small></div>
-              </div>
-            </div>
-            <figcaption id="context-diagram-caption">The model owns the proposed plan. Application code owns every crossing into execution and state. Results flow back as both a customer-facing answer and inspectable artifacts.</figcaption>
-          </figure>
-
-          <p>The lab prompt makes the proposal more disciplined. It tells the model to derive every constraint from <code>user_request</code>, build TinyDB queries dynamically, default ambiguous intent to a read-only dry run, and always set <code>answer_text</code> plus a defined <code>STATUS</code>. It also declares a transaction policy before generation: validate the whole request before writing, create one transaction row per item, and update the running balance sequentially.</p>
-          <p>These are not implementation trivia. They define the behavioral envelope inside which the plan may vary.</p>
-
-          <figure class="diagram" aria-labelledby="component-diagram-title component-diagram-caption">
-            <div class="diagram-heading"><p class="diagram-title" id="component-diagram-title">Who owns each step?</p><p class="diagram-level">C4-style · component view</p></div>
-            <div class="system-boundary">
-              <span class="boundary-label">Customer-service agent internals</span>
-              <div class="component-flow">
-                <div class="component-node"><span class="owner-label">Application</span><div><strong>Context constructor</strong><p>Builds the live schema block and combines it with the question and policies.</p></div><code>schema + request → prompt</code></div>
-                <div class="component-arrow" aria-hidden="true">↓</div>
-                <div class="component-node"><span class="owner-label">LLM</span><div><strong>Plan generator</strong><p>Writes numbered, tagged Python that encodes the request-specific route.</p></div><code>prompt → plan_with_code</code></div>
-                <div class="component-arrow" aria-hidden="true">↓</div>
-                <div class="component-node"><span class="owner-label">Application</span><div><strong>Code extractor</strong><p>Selects the body between execution tags, or accepts raw code.</p></div><code>content → code</code></div>
-                <div class="component-arrow" aria-hidden="true">↓</div>
-                <div class="component-node"><span class="owner-label">Application policy</span><div><strong>Plan validator</strong><p>Checks the code and intended action against the approved contract before execution.</p></div><code>code + policy → decision</code></div>
-                <div class="component-arrow" aria-hidden="true">↓</div>
-                <div class="component-node"><span class="owner-label">Executor</span><div><strong>Controlled runtime</strong><p>Exposes approved tables and helpers, captures stdout and exceptions.</p></div><code>approved code → effects</code></div>
-                <div class="component-arrow" aria-hidden="true">↓</div>
-                <div class="component-node"><span class="owner-label">Generated code</span><div><strong>State mutation</strong><p>Reads records; only a validated mutate path updates stock and appends transaction rows.</p></div><code>before → after</code></div>
-                <div class="component-arrow" aria-hidden="true">↓</div>
-                <div class="component-node"><span class="owner-label">Application</span><div><strong>Result packager</strong><p>Returns the answer, status, stdout, error, and state snapshots together.</p></div><code>effects → artifacts</code></div>
-              </div>
-            </div>
-            <figcaption id="component-diagram-caption">The notebook implements extraction and a controlled namespace directly. The separate validator shown here is a teaching decomposition: it names the policy boundary that the prompt and executor collectively imply.</figcaption>
-          </figure>
-        </section>
-
-        <section class="section card" id="function-boundaries" data-section-label="03 · Expose the framework-free contracts">
-          <h2>Three functions make the control model legible</h2>
-          <p class="lead">The useful abstraction is not “an agent object.” It is a small set of functions with explicit callers, inputs, effects, and returns.</p>
-          <p>The signatures below normalize the notebook into teaching contracts. Names such as <code>extract_tagged_python</code> and <code>validate_plan</code> make hidden responsibilities visible; they are explanatory helpers, not claims about extra verbatim notebook functions.</p>
-
-          <div class="contract-list">
-            <section class="contract" aria-labelledby="generate-contract-title">
-              <div>
-                <h3 id="generate-contract-title">1. Generate, but do not execute</h3>
-                <pre class="code-contract"><code><span class="keyword">def</span> generate_llm_code(
-    question, inventory, transactions
-) -&gt; plan_with_code:
-    schema = build_schema(inventory, transactions)
-    prompt = policies + schema + question
-    <span class="keyword">return</span> llm(prompt)  <span class="comment"># proposal only</span></code></pre>
-              </div>
-              <dl>
-                <div><dt>Called by</dt><dd><code>customer_service_agent</code>, after optional reseeding.</dd></div>
-                <div><dt>May read</dt><dd>The question and live table schemas/samples needed to construct context.</dd></div>
-                <div><dt>May mutate</dt><dd>Nothing in inventory or transactions.</dd></div>
-                <div><dt>Why it exists</dt><dd>It isolates nondeterministic plan generation from deterministic execution plumbing.</dd></div>
-                <div><dt>Returns</dt><dd>The full model response, normally Python inside <code>&lt;execute_python&gt;</code> tags.</dd></div>
-              </dl>
-            </section>
-
-            <section class="contract" aria-labelledby="execute-contract-title">
-              <div>
-                <h3 id="execute-contract-title">2. Cross the execution boundary</h3>
-                <pre class="code-contract"><code><span class="keyword">def</span> execute_generated_code(
-    plan_with_code, approved_state, user_request
-) -&gt; {
-    <span class="value">answer, status, stdout, error,</span>
-    <span class="value">inventory_after, transactions_after</span>
-}:
-    code = extract_tagged_python(plan_with_code)
-    validate_plan(code, policy)
-    <span class="keyword">return</span> run_and_capture(code, approved_state)</code></pre>
-              </div>
-              <dl>
-                <div><dt>Called by</dt><dd><code>customer_service_agent</code>, after a plan exists.</dd></div>
-                <div><dt>May read</dt><dd>The request, approved helpers, inventory table, and transaction table.</dd></div>
-                <div><dt>May mutate</dt><dd>Inventory and transactions only when the parsed intent and all requested items pass policy checks.</dd></div>
-                <div><dt>Why it exists</dt><dd>It centralizes extraction, approved runtime objects, output capture, and failure reporting.</dd></div>
-                <div><dt>Returns</dt><dd>Customer answer plus status, logs, errors, and after-state snapshots. The notebook’s concrete dictionary calls the answer field <code>answer</code>; this contract makes <code>status</code> explicit as a first-class artifact.</dd></div>
-              </dl>
-            </section>
-
-            <section class="contract" aria-labelledby="agent-contract-title">
-              <div>
-                <h3 id="agent-contract-title">3. Orchestrate the whole request</h3>
-                <pre class="code-contract"><code><span class="keyword">def</span> customer_service_agent(
-    question, reseed=<span class="value">False</span>
-) -&gt; {plan, execution_artifacts}:
-    <span class="keyword">if</span> reseed:
-        reset_demo_state()
-    plan = generate_llm_code(question, state)
-    artifacts = execute_generated_code(plan, state, question)
-    <span class="keyword">return</span> {<span class="value">"plan"</span>: plan,
-            <span class="value">"execution_artifacts"</span>: artifacts}</code></pre>
-              </div>
-              <dl>
-                <div><dt>Called by</dt><dd>The user-facing application or a notebook experiment.</dd></div>
-                <div><dt>May read</dt><dd>The natural-language request and the current demo state.</dd></div>
-                <div><dt>May mutate</dt><dd>Only through the executor; <code>reseed=True</code> separately resets the demonstration tables.</dd></div>
-                <div><dt>Why it exists</dt><dd>It presents one end-to-end interface without collapsing plan and execution into one opaque call.</dd></div>
-                <div><dt>Returns</dt><dd>The original plan and the complete execution artifact bundle.</dd></div>
-              </dl>
-            </section>
-          </div>
-
-          <h3>The policy must be visible before execution</h3>
-          <ol class="policy-list">
-            <li><span>01</span><div><strong>Derive constraints from the request.</strong><p>Shapes, keywords, price ranges, quantities, stock requirements, and action intent come from <code>user_request</code>; the plan should not smuggle in fixed values.</p></div></li>
-            <li><span>02</span><div><strong>Ambiguity means read-only.</strong><p>If the intent to buy, return, restock, or adjust is not clear, the workflow performs a dry run instead of changing state.</p></div></li>
-            <li><span>03</span><div><strong>Validate the whole request first.</strong><p>For a multi-item purchase, confirm that every item exists and has sufficient stock before mutating anything.</p></div></li>
-            <li><span>04</span><div><strong>Preserve per-item accounting.</strong><p>Each item gets its own transaction row. The next balance begins from the preceding row’s balance.</p></div></li>
-            <li><span>05</span><div><strong>Always produce a human answer and machine status.</strong><p><code>answer_text</code> stays short; <code>STATUS</code> is one of success, no match, insufficient stock, invalid request, or unsupported intent.</p></div></li>
-          </ol>
-        </section>
-
-        <section class="section card" id="execution-trace" data-section-label="04 · Follow one request through the system">
-          <h2>An execution trace makes the policy concrete</h2>
-          <p>The notebook’s multi-item purchase is a useful trace because it exercises parsing, all-items validation, two inventory updates, two transaction inserts, and a sequential running balance.</p>
-          <div class="trace-request">
-            <p class="kicker">Representative request</p>
-            <blockquote><p>“I want to buy 3 pairs of classic sunglasses and 1 pair of aviator sunglasses.”</p></blockquote>
-          </div>
-
-          <figure aria-labelledby="trace-caption">
-            <div class="table-wrap">
-              <table class="trace-table">
-                <thead><tr><th>Step</th><th>Boundary</th><th>Observed or produced artifact</th><th>Mutation?</th></tr></thead>
-                <tbody>
-                  <tr><td>01</td><td>Request intake</td><td>Intent = purchase; requested lines = Classic × 3, Aviator × 1.</td><td><span class="no-mutation">No</span></td></tr>
-                  <tr><td>02</td><td>State observation</td><td>Classic: 10 units at $60. Aviator: 23 units at $80. Opening balance: $500.</td><td><span class="no-mutation">No</span></td></tr>
-                  <tr><td>03</td><td>Plan generation</td><td>Parse both lines; retrieve both records; validate existence and stock; only then loop through writes.</td><td><span class="no-mutation">No</span></td></tr>
-                  <tr><td>04</td><td>Whole-request validation</td><td>Classic needs 3 ≤ 10; Aviator needs 1 ≤ 23. Both lines pass. If either failed, status would be <code>insufficient_stock</code> and neither line would mutate.</td><td><span class="no-mutation">No</span></td></tr>
-                  <tr><td>05</td><td>Classic write</td><td>Stock 10 → 7. Insert TXN002 for $180. Running balance $500 → $680.</td><td><span class="mutation">Yes</span></td></tr>
-                  <tr><td>06</td><td>Aviator write</td><td>Stock 23 → 22. Insert TXN003 for $80. Running balance $680 → $760.</td><td><span class="mutation">Yes</span></td></tr>
-                  <tr><td>07</td><td>Result packaging</td><td><code>STATUS="success"</code>; stdout logs action, dry-run flag, and status; error is empty.</td><td><span class="no-mutation">No</span></td></tr>
-                  <tr><td>08</td><td>User response</td><td>“Great, I’ve reserved 3 pairs of Classic and 1 pair of Aviator for you.”</td><td><span class="no-mutation">No</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-            <figcaption id="trace-caption">The decisive ordering is validate first, then mutate. Separate transaction rows preserve the relationship between each line total and each balance transition.</figcaption>
-          </figure>
-
-          <div class="state-delta" aria-label="Before and after state summary">
-            <section class="state-panel"><h3>Before execution</h3><ul><li>Classic stock: 10</li><li>Aviator stock: 23</li><li>One opening-balance row</li><li>Register balance: $500</li></ul></section>
-            <div class="state-arrow" aria-hidden="true">→</div>
-            <section class="state-panel after"><h3>After successful execution</h3><ul><li>Classic stock: 7</li><li>Aviator stock: 22</li><li>Two new purchase rows</li><li>Register balance: $760</li></ul></section>
-          </div>
-
-          <div class="status-line" aria-label="Execution artifacts"><span class="status-success">status · success</span><span>stdout · ACTION=mutate</span><span>error · none</span><span>answer · short text</span></div>
-
-          <h3>Failure paths are state transitions too—even when state does not change</h3>
-          <p>If the request asks for more units than are available, the workflow returns <code>insufficient_stock</code>, states the available quantity, and performs no writes. If a required quantity cannot be parsed, the status is <code>invalid_request</code>. If the action is outside the store’s supported capabilities, the status is <code>unsupported_intent</code>. If no product matches, the status is <code>no_match</code> and the answer offers a nearby alternative or next step.</p>
-          <p><code>reseed=True</code> does not grant extra authority and is not part of the customer’s intent. It is a reproducibility control for the demonstration: reset the inventory and transactions to a known baseline so repeated experiments are comparable. With <code>reseed=False</code>, later calls continue from prior state.</p>
-        </section>
-
-        <section class="section card" id="trace-is-artifact" data-section-label="05 · Preserve what happened">
-          <h2>The trace—not only the answer—is the engineering artifact</h2>
-          <p class="lead">“Great, I’ve reserved…” is useful to the customer. It is insufficient for the engineer who must understand whether the reservation was correct.</p>
-          <p>The answer compresses the workflow into one sentence. The trace retains the distinctions that make the system inspectable: the original question, the generated code, the stdout log, any exception, the explicit status, and the before/after tables. From those artifacts, a reviewer can ask whether the plan parsed the right quantities, checked all items before writing, used one transaction per item, and advanced the balance in the correct order.</p>
-          <p>This is also why generation and execution should remain separate. If the generated plan is wrong, inspect the prompt, schema, and plan. If the plan is sound but execution fails, inspect extraction, approved objects, runtime error, and state snapshots. If the final answer is wrong even though the state is right, inspect result packaging. Each boundary narrows the place where an error can live.</p>
-          <div class="boundary-note"><p><strong>A short response and a rich trace serve different audiences.</strong> Keep technical details in artifacts and logs; keep <code>answer_text</code> customer-friendly. Do not force one representation to do both jobs.</p></div>
-        </section>
-
-        <section class="section card" id="multi-agent" data-section-label="06 · Reuse the decomposition across agents">
-          <h2>The same artifact discipline scales to a small team</h2>
-          <p>The market-research lab changes the domain but keeps the architectural idea. Instead of one code plan touching store state, a fixed Python pipeline moves increasingly refined artifacts through four specialized roles. Each agent has a narrower responsibility, and each handoff becomes an inspectable input to the next step.</p>
-
-          <figure class="lesson-figure">
-            <img src="../assets/reference/datawhale-agentic-ai-a93ab1d/m5-multi-agent-linear-plan.png" alt="Course diagram of a linear marketing workflow passing research to a graphic designer and then to a writer for a final report." loading="eager" decoding="async">
-            <figcaption><span><strong>Course reference · linear multi-agent plan.</strong> Role boundaries reduce each component’s scope; the workflow still needs explicit handoffs.</span></figcaption>
-          </figure>
-
-          <figure class="diagram" aria-labelledby="market-diagram-title market-diagram-caption">
-            <div class="diagram-heading"><p class="diagram-title" id="market-diagram-title">Summer campaign pipeline</p><p class="diagram-level">C4-style · component + artifact flow</p></div>
-            <div class="system-boundary">
-              <span class="boundary-label">Fixed Python orchestration boundary</span>
-              <div class="diagram-row artifact-chain">
-                <div class="c4-box external"><p class="owner">External request</p><strong>Campaign brief</strong><small>Create a summer sunglasses campaign.</small><span class="artifact-chip">request</span></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box planner"><p class="owner">Market Research Agent</p><strong>Research + catalog match</strong><small>Uses search and internal product catalog tools.</small><span class="artifact-chip">trend summary</span></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box guard"><p class="owner">Graphic Designer Agent</p><strong>Prompt + image</strong><small>Writes a visual prompt and caption, then generates and saves the image.</small><span class="artifact-chip">path · prompt · caption</span></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box"><p class="owner">Copywriter Agent</p><strong>Campaign line</strong><small>Reads the image and trend summary together.</small><span class="artifact-chip">quote · justification</span></div>
-                <span class="flow-arrow" aria-hidden="true">→</span>
-                <div class="c4-box output"><p class="owner">Packaging Agent</p><strong>Executive report</strong><small>Rewrites the summary and combines every artifact.</small><span class="artifact-chip">final Markdown path</span></div>
-              </div>
-            </div>
-            <figcaption id="market-diagram-caption">Control moves left to right because ordinary Python calls the agents in this fixed order. The handoff contract—not a shared conversational memory—is what connects the roles.</figcaption>
-          </figure>
-
-          <h3>Each role owns one transformation</h3>
-          <p>The Market Research Agent loops through tool calls until the model returns a final summary. Its output is a trend brief that includes leading trends, matching catalog products, and justification. The Graphic Designer Agent turns that text into a JSON-shaped prompt and caption, sends the prompt to an image model, saves the image locally, and returns <code>{image_path, prompt, caption}</code>.</p>
-          <p>The Copywriter Agent receives two artifacts: the local image and the trend summary. It returns a short quote plus a justification. The Packaging Agent receives the summary, image path, quote, and justification; it asks the model to rewrite the summary for an executive audience, then writes the final Markdown report and returns its path.</p>
-          <p>The full pipeline function is deliberately unsurprising. It calls research, then design, then copywriting, then packaging, storing each return value in a named variable. Its final dictionary keeps the trend summary, visual result, quote result, and Markdown path. That explicitness is the point: every handoff can be viewed, tested, or replaced independently.</p>
-        </section>
-
-        <section class="section card" id="control-models" data-section-label="07 · Decide where coordination lives">
-          <h2>Fixed orchestration and planner-managed coordination move the control point</h2>
-          <p>A fixed multi-agent pipeline and a planner-managed team can contain the same roles. What changes is who decides the next step. In the lab pipeline, Python determines the sequence before runtime. In the course’s planning example, a marketing-manager model receives descriptions of the available agents and proposes which one to call, in what order, and when to review the result.</p>
-
-          <div class="table-wrap">
-            <table class="control-compare">
-              <thead><tr><th>Design question</th><th>Fixed code orchestration</th><th>Planner-managed coordination</th></tr></thead>
-              <tbody>
-                <tr><td>Where control lives</td><td>In the Python function that calls each role.</td><td>In a generated plan produced from the goal and available agent descriptions.</td></tr>
-                <tr><td>What is dynamic</td><td>Agent outputs and tool-call loops inside an agent.</td><td>The selected roles, their order, and potentially the number of steps.</td></tr>
-                <tr><td>What stays contract-bound</td><td>Function arguments, return dictionaries, tools, and artifact paths.</td><td>Available agents, their declared capabilities, handoff shapes, execution policy, and result capture.</td></tr>
-                <tr><td>Main strength</td><td>Clear, repeatable, easy-to-follow control flow.</td><td>Request-specific composition without predefining every route.</td></tr>
-                <tr><td>Control cost</td><td>Changing the route requires changing orchestration code.</td><td>The route is less predictable and therefore demands visible plans and handoffs.</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p>The course also shows that communication topology is a separate decision. A linear chain passes work in one direction. A hierarchy places a manager above specialist agents. A deeper hierarchy lets sub-agents coordinate teams of their own. An all-to-all pattern permits direct communication among every role. Greater flexibility changes the debugging burden because more paths can carry context and feedback.</p>
-
-          <h3>What frameworks hide</h3>
-          <p>High-level libraries such as LangChain or CrewAI can package the conveniences below. Module 5’s low-level code is valuable because it lets you see the pieces before they are represented as framework objects or configuration.</p>
-          <div class="mapping-list" aria-label="Low-level concepts mapped to framework conveniences">
-            <div class="mapping-row"><strong>Prompt + live schema + request</strong><p>The application constructs the model context explicitly and decides what data descriptions enter it.</p><p class="framework-label">Packaged as agent configuration or prompt templates</p></div>
-            <div class="mapping-row"><strong>Python functions + approved helpers</strong><p>Each callable has concrete arguments, return values, and access to selected capabilities.</p><p class="framework-label">Packaged as tools and agent capabilities</p></div>
-            <div class="mapping-row"><strong>Tool-call loop or function calls</strong><p>Code dispatches the requested capability, appends the result, and continues until a final response exists.</p><p class="framework-label">Packaged as an agent runner or orchestration loop</p></div>
-            <div class="mapping-row"><strong>Inventory, transactions, messages</strong><p>State is held in explicit tables, local variables, and message lists rather than an invisible “memory.”</p><p class="framework-label">Packaged as state, memory, or shared context</p></div>
-            <div class="mapping-row"><strong>Named return dictionaries</strong><p>Trend summaries, image paths, prompts, captions, quotes, justifications, and report paths form handoff contracts.</p><p class="framework-label">Packaged as tasks, outputs, or inter-agent handoffs</p></div>
-            <div class="mapping-row"><strong>stdout + error + snapshots</strong><p>The workflow preserves execution evidence separately from the polished answer.</p><p class="framework-label">Packaged as tracing, callbacks, or run records</p></div>
-          </div>
-          <p class="small-note">The framework labels are conceptual mappings of the course’s taught building blocks, not a framework API tutorial. The underlying design questions remain: who owns control, which state is visible, what may mutate, and which artifacts cross each boundary?</p>
-        </section>
-
-        <section class="section card recall-section" id="build-it" data-section-label="08 · Make the abstractions yours">
-          <h2>A practical design checklist</h2>
-          <ol class="design-checklist">
-            <li><div><strong>Name the state.</strong><p>List every table, message history, file, and intermediate result the workflow can read.</p></div></li>
-            <li><div><strong>Mark mutation authority.</strong><p>For each function, state whether it can write and which preconditions must hold first.</p></div></li>
-            <li><div><strong>Separate generation from execution.</strong><p>Return the plan before running it so the proposal remains inspectable.</p></div></li>
-            <li><div><strong>Define the plan envelope.</strong><p>Declare available helpers, output tags or fields, allowed statuses, and response requirements.</p></div></li>
-            <li><div><strong>Validate before the first write.</strong><p>For multi-item work, check the full request so partial mutation does not precede a predictable failure.</p></div></li>
-            <li><div><strong>Make handoffs concrete.</strong><p>Use named artifacts—summary, image path, prompt, caption, quote, justification, report path—instead of vague shared context.</p></div></li>
-            <li><div><strong>Return evidence with the answer.</strong><p>Preserve status, stdout, errors, and before/after state for review.</p></div></li>
-            <li><div><strong>Control reproducibility explicitly.</strong><p>Treat reseeding as a test setup choice, never as inferred business intent.</p></div></li>
-          </ol>
-
-          <h3>Durable takeaways</h3>
-          <div class="durable-takeaways">
-            <article><h3>Plans are data before they are effects.</h3><p>Capture and inspect them at the boundary.</p></article>
-            <article><h3>Expressiveness increases the need for containment.</h3><p>Code can compose rich operations, so its accessible runtime must be explicit.</p></article>
-            <article><h3>State policy belongs in the contract.</h3><p>All-items validation and sequential balance updates are correctness rules, not stylistic preferences.</p></article>
-            <article><h3>Handoffs are the multi-agent architecture.</h3><p>Roles become a system only when their artifacts and order are defined.</p></article>
-          </div>
-
-          <h3>Try it in code</h3>
-          <ol class="try-sequence">
-            <li>Seed a tiny inventory table and a transaction table with one opening-balance row.</li>
-            <li>Write <code>build_schema(...)</code> so the planner sees live fields, types, and samples.</li>
-            <li>Implement <code>generate_llm_code(...)</code> and verify it cannot mutate state.</li>
-            <li>Add <code>extract_tagged_python(...)</code>, then test empty, tagged, and raw-code inputs.</li>
-            <li>Write a visible <code>validate_plan(...)</code> policy gate before execution.</li>
-            <li>Implement <code>execute_generated_code(...)</code> with approved objects, stdout capture, errors, status, and snapshots.</li>
-            <li>Test a read-only query, a return, a valid two-item purchase, an insufficient-stock purchase, and an ambiguous request.</li>
-            <li>Build four plain Python functions for research, design, copywriting, and packaging; pass named dictionaries between them.</li>
-            <li>Only after the fixed pipeline is observable, experiment with a planner choosing among the same bounded roles.</li>
-          </ol>
-
-          <div class="self-check">
-            <h3>Self-check</h3>
-            <details><summary>Why is the plan an intermediate artifact rather than the final authority?</summary><p>Because it is a model-produced proposal. Application code still extracts it, applies policy, supplies approved runtime objects, observes effects, and packages results.</p></details>
-            <details><summary>What must happen before a multi-item purchase mutates inventory?</summary><p>Every requested item must be identified and checked for sufficient stock. If any line fails, the workflow returns an appropriate status and performs no mutation.</p></details>
-            <details><summary>Why create separate transaction rows for separate items?</summary><p>Each line total gets its own record, and the running balance advances sequentially from one transaction to the next.</p></details>
-            <details><summary>What changes when coordination moves from Python into a planner?</summary><p>The route—selected roles and their order—becomes dynamic. Agent capabilities, handoff contracts, execution policy, state access, and result capture still remain application-defined.</p></details>
-            <details><summary>What does <code>reseed=True</code> mean?</summary><p>Reset the demonstration data to a known baseline for a clean, reproducible run. It is not a customer action or a relaxation of mutation policy.</p></details>
-          </div>
-        </section>
-
-        <section class="source-note" aria-labelledby="sources-title">
-          <p class="kicker" id="sources-title">Local course authority</p>
-          <p>This chapter synthesizes the complete Module 5 learner PDF, the Customer Service Agent lab, the Market Research Team lab, and the current Module 5 notes. Function signatures and helper names marked as teaching decompositions clarify boundaries without presenting themselves as verbatim framework APIs. No external course claims were added.</p>
-        </section>
-      </article>
-    </div>
-
-    <nav class="chapter-pagination" aria-label="Chapter navigation">
-      <a href="module-4.html"><span>Previous module</span><strong>← Evaluation</strong></a>
-      <a class="next" href="../index.html"><span>Course map</span><strong>All modules →</strong></a>
-    </nav>
-  </main>
-</body>
-</html>
+customer_service_agent(question, ..., reseed=False)
+    → full_content, exec</code></pre></div></section>
+<section class="lesson" id="purchase" data-nav="The purchase trace"><p class="section-kicker">04 / The purchase trace</p><h2>Trace a two-item purchase.</h2><p>The local customer-service example asks to buy three Classic sunglasses and one Aviator. The following trace uses the lab’s example quantities and prices with an opening balance of $500.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Stage</th><th>Artifact / transition</th><th>Effect</th></tr></thead><tbody><tr><td>Request</td><td>Classic × 3; Aviator × 1</td><td>None</td></tr><tr><td>Observe</td><td>Classic: 10 at $60; Aviator: 23 at $80</td><td>Read</td></tr><tr><td>Validate</td><td>3 ≤ 10 and 1 ≤ 23</td><td>No write yet</td></tr><tr><td>Classic purchase</td><td>Stock 10 → 7; line total $180; balance $500 → $680</td><td>Inventory + transaction row</td></tr><tr><td>Aviator purchase</td><td>Stock 23 → 22; line total $80; balance $680 → $760</td><td>Inventory + transaction row</td></tr><tr><td>Package</td><td>Answer, output logs, error, and tables</td><td>Evidence retained</td></tr></tbody></table></div><p>Each line has its own transaction record and a sequential running balance. Checking every requested item before the first write prevents a predictable stock failure from being discovered after an earlier item was already changed.</p><h3>The requested behavior envelope</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Condition</th><th>Intended behavior</th></tr></thead><tbody><tr><td>Ambiguous action</td><td>Read-only dry run</td></tr><tr><td>No matching product</td><td>no_match; offer a relevant next step</td></tr><tr><td>Insufficient stock</td><td>insufficient_stock; do not write</td></tr><tr><td>Unparseable quantity</td><td>invalid_request</td></tr><tr><td>Unsupported action</td><td>unsupported_intent</td></tr><tr><td>Successful supported action</td><td>success; short answer plus evidence</td></tr></tbody></table></div><p>These are requested policies for generated code. They are not unconditional guarantees of the original executor. The course also demonstrates returning two Aviator glasses, increasing stock from 23 to 25, and adjusting the transaction balance.</p><aside class="note"><p><code>reseed=True</code> resets demonstration inventory and transactions for a reproducible run. It is a test setup choice, not a customer action. With reseeding off, later calls continue from prior state.</p></aside><div class="check"><p class="panel-label">Pause & reason</p><p>Both items passed stock validation. Does that prevent a partial write if the second insert fails?</p><details><summary>Reveal the reasoning</summary><p>No. Pre-validation handles predictable invalid inputs. Atomic execution or an explicit recovery design is needed for failures during writes.</p></details></div></section>
+<section class="lesson" id="practice" data-nav="Runnable state exercise"><p class="section-kicker">05 / Runnable state exercise</p><h2>Put state changes behind bounded code.</h2><p>For the teaching extension, the model’s proposed purchase is a list of product/quantity pairs. Application code validates that list, calculates updates on a candidate state, and commits only after the whole operation succeeds.</p><p>The exercise also remembers a request ID. Repeating the same purchase returns <code>already_applied</code>; reusing the ID for different quantities returns <code>id_conflict</code>. This makes retry behavior explicit.</p><div class="code-panel"><div class="code-heading"><span>Python · bounded in-memory purchase operation</span><button class="copy js-only" type="button">Copy</button></div><pre><code>def purchase(state, request_id, lines, fail_after=None):
+    if not isinstance(request_id, str) or not request_id:
+        return {&quot;status&quot;: &quot;invalid_request&quot;}
+    if not isinstance(lines, list) or not lines:
+        return {&quot;status&quot;: &quot;invalid_request&quot;}
+    quantities = {}
+    for line in lines:
+        if not isinstance(line, dict) or set(line) != {&quot;product&quot;, &quot;qty&quot;}:
+            return {&quot;status&quot;: &quot;invalid_request&quot;}
+        name, qty = line[&quot;product&quot;], line[&quot;qty&quot;]
+        if not isinstance(name, str) or name not in PRICES or type(qty) is not int or qty &lt;= 0:
+            return {&quot;status&quot;: &quot;invalid_request&quot;}
+        quantities[name] = quantities.get(name, 0) + qty
+    fingerprint = tuple(sorted(quantities.items()))
+    if request_id in state[&quot;receipts&quot;]:
+        prior = state[&quot;receipts&quot;][request_id]
+        return {&quot;status&quot;: &quot;already_applied&quot; if prior == fingerprint else &quot;id_conflict&quot;}
+    if any(qty &gt; state[&quot;stock&quot;][name] for name, qty in quantities.items()):
+        return {&quot;status&quot;: &quot;insufficient_stock&quot;}
+    candidate = deepcopy(state)
+    for index, (name, qty) in enumerate(quantities.items(), 1):
+        candidate[&quot;stock&quot;][name] -= qty
+        candidate[&quot;balance&quot;] += PRICES[name] * qty
+        candidate[&quot;transactions&quot;].append({&quot;product&quot;: name, &quot;qty&quot;: qty,
+                                           &quot;balance&quot;: candidate[&quot;balance&quot;]})
+        if index == fail_after:
+            return {&quot;status&quot;: &quot;execution_failed&quot;}  # Original state unchanged.
+    candidate[&quot;receipts&quot;][request_id] = fingerprint
+    state.update(candidate)  # One commit in this single-threaded fixture.
+    return {&quot;status&quot;: &quot;success&quot;}</code></pre></div><aside class="note"><p>This is a single-process, single-threaded in-memory exercise. Its staged update illustrates a commit boundary; it is not a durable transaction system, concurrency-safe inventory service, or sandbox. Those require additional engineering.</p></aside><p class="subtle">Runnable teaching extension · standard library only · deterministic fixtures, no model or external service calls.</p><div class="download-row"><a class="button" href="../labs/module_5_planning.py" download>Download the Python exercise ↓</a></div><div class="code-panel"><div class="code-heading"><span>Terminal · from the repository folder</span><button class="copy js-only" type="button">Copy</button></div><pre><code>python3 labs/module_5_planning.py</code></pre></div><div class="output"><p class="panel-label">Expected output</p><pre>Classic: 10 -&gt; 7; Aviator: 23 -&gt; 22; balance: 500 -&gt; 760
+Retry: already_applied; injected failure: no partial write
+PASS: validation, totals, staged commit, retries, conflicting IDs</pre></div><div class="exercise"><p class="panel-label">Your turn</p><h3>Fail after the first item.</h3><ol><li>Run the successful purchase and check both stocks and balances.</li><li>Use <code>fail_after=1</code>. Verify that the original state is unchanged.</li><li>Retry the same request ID and payload. Confirm there is no second charge.</li><li>Reuse that ID with different quantities and inspect the conflict.</li><li>Request the same product twice. Explain why quantities must be combined before checking stock.</li></ol></div></section>
+<section class="lesson" id="team" data-nav="The multi-agent pipeline"><p class="section-kicker">06 / The multi-agent pipeline</p><h2>A team is a set of explicit handoffs.</h2><p>The market-research notebook uses a fixed Python pipeline with four specialized roles. Each function receives a concrete artifact and returns another. The pipeline does not rely on an invisible shared conversation.</p><figure class="c4"><div class="c4-heading"><strong>Inside the campaign application</strong><span>C4-style · Component view</span></div><div class="c4-boundary"><p class="panel-label">Application process · Python container</p><ol class="component-grid"><li><small>Python component</small><strong>Market research role</strong><p>Uses search and product catalog tools to build a trend brief.</p><code>request → trend_summary</code></li><li><small>Python component</small><strong>Graphic design role</strong><p>Creates a prompt/caption, requests an image, and saves it.</p><code>trend_summary → image_path + prompt + caption</code></li><li><small>Python component</small><strong>Copywriting role</strong><p>Reads both image and research to propose campaign copy.</p><code>image + summary → quote + justification</code></li><li><small>Python component</small><strong>Packaging role</strong><p>Rewrites for executives and assembles the report.</p><code>artifacts → markdown_path</code></li></ol></div><figcaption>Numbered relationships show the primary handoff order inside one application process. These are teaching decompositions of responsibilities, not additional notebook APIs.</figcaption></figure><p>The designer returns <code>{image_path, prompt, caption}</code>. The copywriter returns a quote and justification. The packaging function reads the summary, image path, quote, and justification, then writes a Markdown report.</p><div class="code-panel"><div class="code-heading"><span>Python-like sketch · fixed artifact handoffs</span><button class="copy js-only" type="button">Copy</button></div><pre><code>research = market_research_agent()
+visual = graphic_designer_agent(research)
+copy = copywriter_agent(visual[&quot;image_path&quot;], research)
+report = packaging_agent(research, visual[&quot;image_path&quot;],
+                         copy[&quot;quote&quot;], copy[&quot;justification&quot;])</code></pre></div><p>The research role may use a tool loop internally. The top-level route remains fixed: research → design → copy → package. The full pipeline preserves intermediate dictionaries alongside the final report path, so each role can be inspected or replaced independently.</p></section>
+<section class="lesson" id="coordination" data-nav="Control & communication"><p class="section-kicker">07 / Control & communication</p><h2>Choose who controls the route.</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Design question</th><th>Fixed Python pipeline</th><th>Planner-managed team</th></tr></thead><tbody><tr><td>Who chooses the next role?</td><td>Application code</td><td>A model-produced plan</td></tr><tr><td>What varies?</td><td>Role outputs and internal tool calls</td><td>Selected roles, order, and possibly repetitions</td></tr><tr><td>What stays explicit?</td><td>Arguments, outputs, tools, and file paths</td><td>Capabilities, handoff contracts, execution policy</td></tr><tr><td>Tradeoff</td><td>Predictable route; code change needed for a new route</td><td>Flexible composition; more paths to evaluate and diagnose</td></tr></tbody></table></div><h3>Communication topology is another choice</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Topology</th><th>Shape</th><th>Question to inspect</th></tr></thead><tbody><tr><td>Linear</td><td>Researcher → designer → writer</td><td>Does each handoff contain what the next role needs?</td></tr><tr><td>Hierarchy</td><td>Manager ↔ specialists</td><td>Who delegates, reviews, and decides completion?</td></tr><tr><td>Deeper hierarchy</td><td>Manager ↔ team leads ↔ specialists</td><td>Where are responsibility and summaries lost?</td></tr><tr><td>All-to-all</td><td>Every role can communicate with other roles</td><td>Which messages influence which decision?</td></tr></tbody></table></div><p>A planner-managed marketing manager can request research, images, writing, and a review. Roles do not remove the need for execution policy, stopping conditions, or evidence. More communication paths increase the number of handoffs you must understand.</p><h3>What frameworks package</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Underlying mechanism</th><th>Common abstraction</th></tr></thead><tbody><tr><td>Prompt + schema + request</td><td>Agent configuration or prompt template</td></tr><tr><td>Python function + description</td><td>Tool</td></tr><tr><td>Dispatch loop + termination</td><td>Runner</td></tr><tr><td>Tables + messages + local variables</td><td>State or memory</td></tr><tr><td>Named return values</td><td>Task outputs and handoffs</td></tr><tr><td>Logs + errors + snapshots</td><td>Tracing or callbacks</td></tr></tbody></table></div><p>These are conceptual mappings, not a LangChain or CrewAI API tutorial. Build and inspect the fixed route first, then experiment with planner selection among the same bounded roles.</p></section>
+<section class="lesson" id="recall" data-nav="Recall & checklist"><p class="section-kicker">08 / Recall & checklist</p><h2>Explain control, state, and evidence.</h2><p>Answer before opening the explanation. Then revisit the example that exposed a gap.</p><div class="recall-list"><details><summary>Why is the plan an intermediate artifact?</summary><p>It is a proposal. Application code must interpret it, apply actual controls, execute permitted operations, and inspect results.</p></details><details><summary>What should happen before a multi-item purchase writes?</summary><p>Validate the complete request, including combined quantities. The original prompt asks for this; stronger application code enforces it.</p></details><details><summary>Why one transaction row per item?</summary><p>It preserves each line total and the corresponding running-balance transition.</p></details><details><summary>What changes when planning replaces fixed coordination?</summary><p>The route becomes model-selected. Capabilities, handoff shapes, state access, and execution controls still need explicit ownership.</p></details><details><summary>What does reseed=True do?</summary><p>Reset demo tables to a known baseline for another experiment.</p></details><details><summary>Why is exec with selected objects not a sandbox?</summary><p>A Python namespace is not an independent containment mechanism. Reachable objects and builtins can expose broader capabilities.</p></details></div><div class="mastery"><p class="panel-label">Before you move on</p><label><input type="checkbox" data-mastery="skill-0"> I can separate prompt policy from enforced controls.</label><label><input type="checkbox" data-mastery="skill-1"> I can trace a purchase and explain partial failure.</label><label><input type="checkbox" data-mastery="skill-2"> I ran the retry and staged-commit exercise.</label><label><input type="checkbox" data-mastery="skill-3"> I can draw a fixed team and a planner-managed team.</label><small id="mastery-status">Checklist saved in this browser when storage is available.</small></div></section>
+<section class="sources" id="sources"><details><summary>Sources & teaching boundaries</summary><p>Course authority: <a href="../agentic_workflows_M5_learner.pdf">Module 5 learner slides</a> (pp. 3–27). Local lab sources: <code>M5_UGL_1_R.ipynb</code> and <code>M5_UGL_2.ipynb</code>.</p><p>The C4 diagrams, synthetic examples, and runnable exercises clarify the mechanisms. They are teaching additions, not measured model results. Original notes and attributed figures remain in the <a href="../archive/2026-09-05/index.html">archived edition</a>.</p><p>Engineering reference: <a href="https://docs.python.org/3/library/functions.html#exec">Python exec and namespace semantics</a>. The bounded purchase exercise extends the course example; it does not reproduce the TinyDB executor.</p><p>Diagram conventions: <a href="https://c4model.com/diagrams/system-context">C4 system context</a> and <a href="https://c4model.com/diagrams/component">component views</a>.</p></details></section><footer class="end-note"><a href="module-4.html"><span>Previous module</span>← Evaluation</a><a href="../index.html"><span>Return to your learning path</span>Course library →</a></footer></main></div></body></html>
